@@ -18,7 +18,7 @@ class DashboardRepository {
       .reduce((sum, o) => sum + o.orderPrice, 0);
 
     const ordersCount = todayOrders.filter(
-      (o) => o.status === "CLOSED" || o.status === "PAID"
+      (o) => o.status === "CLOSED" || o.status === "PAID",
     ).length;
 
     const openOrders = todayOrders.filter((o) => o.status === "CREATED").length;
@@ -29,7 +29,7 @@ class DashboardRepository {
 
     const refunds = todayOrders.reduce(
       (sum, o) => sum + o.refundedWithCash + o.refundedWithCard,
-      0
+      0,
     );
 
     const averageOrder = ordersCount > 0 ? todaySales / ordersCount : 0;

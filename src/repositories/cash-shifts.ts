@@ -71,8 +71,8 @@ const mockCashShifts: CashShift[] = [
 class CashShiftsRepository {
   async getAll(): Promise<CashShift[]> {
     await this.simulateDelay();
-    return [...mockCashShifts].sort((a, b) =>
-      new Date(b.openedAt).getTime() - new Date(a.openedAt).getTime()
+    return [...mockCashShifts].sort(
+      (a, b) => new Date(b.openedAt).getTime() - new Date(a.openedAt).getTime(),
     );
   }
 

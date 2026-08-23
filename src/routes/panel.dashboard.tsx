@@ -1,6 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { TrendingUp, ShoppingCart, Clock, CheckCircle, Wallet, CreditCard, AlertTriangle } from "lucide-react";
+import {
+  TrendingUp,
+  ShoppingCart,
+  Clock,
+  CheckCircle,
+  Wallet,
+  CreditCard,
+  AlertTriangle,
+} from "lucide-react";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ErrorState, LoadingState } from "@/components/common/states";
@@ -23,7 +31,11 @@ export const Route = createFileRoute("/panel/dashboard")({
 });
 
 function DashboardPage() {
-  const { data: stats, isLoading, isError } = useQuery({
+  const {
+    data: stats,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["dashboard-stats"],
     queryFn: () => dashboardRepository.getStats(),
   });
@@ -66,9 +78,7 @@ function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.ordersCount}</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Закритих: {stats.closedOrders}
-            </p>
+            <p className="text-xs text-muted-foreground mt-1">Закритих: {stats.closedOrders}</p>
           </CardContent>
         </Card>
 
@@ -107,7 +117,8 @@ function DashboardPage() {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              Зараз {stats.openOrders} {stats.openOrders === 1 ? "відкритий чек" : "відкритих чеків"}
+              Зараз {stats.openOrders}{" "}
+              {stats.openOrders === 1 ? "відкритий чек" : "відкритих чеків"}
             </p>
           </CardContent>
         </Card>
@@ -145,7 +156,9 @@ function DashboardPage() {
             <div className="grid gap-3 md:grid-cols-3">
               <div>
                 <p className="text-sm text-muted-foreground">Початковий залишок</p>
-                <p className="text-lg font-semibold">{formatMoney(stats.currentShift.openingBalance)}</p>
+                <p className="text-lg font-semibold">
+                  {formatMoney(stats.currentShift.openingBalance)}
+                </p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Продажі готівкою</p>
@@ -153,7 +166,9 @@ function DashboardPage() {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Поточний залишок</p>
-                <p className="text-lg font-semibold">{formatMoney(stats.currentShift.closingBalance)}</p>
+                <p className="text-lg font-semibold">
+                  {formatMoney(stats.currentShift.closingBalance)}
+                </p>
               </div>
             </div>
           </CardContent>
@@ -169,12 +184,12 @@ function DashboardPage() {
           <div className="space-y-2">
             {stats.salesByDay.map((day) => {
               const date = new Date(day.date);
-              const dateStr = date.toLocaleDateString("uk-UA", { 
-                day: "2-digit", 
+              const dateStr = date.toLocaleDateString("uk-UA", {
+                day: "2-digit",
                 month: "short",
-                weekday: "short"
+                weekday: "short",
               });
-              
+
               const maxSales = Math.max(...stats.salesByDay.map((d) => d.sales));
               const percentage = (day.sales / maxSales) * 100;
 
