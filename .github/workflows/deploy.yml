@@ -1,0 +1,43 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to production
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.2.2
+        env:
+          DEPLOY_PATH: ${{ vars.DEPLOY_PATH }}
+          GIT_REF: ${{ github.ref_name }}
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          envs: DEPLOY_PATH,GIT_REF
+          script: |
+            set -euo pipefail
+
+            DEPLOY_PATH="${DEPLOY_PATH:-/opt/horpynka-admin-panel}"
+
+            if [[ ! -d "${DEPLOY_PATH}/.git" ]]; then
+              echo "Repository not found at ${DEPLOY_PATH}"
+              echo "Clone the repo on the server first, then rerun this workflow."
+              exit 1
+            fi
+
+            cd "${DEPLOY_PATH}"
+            bash scripts/deploy.sh
