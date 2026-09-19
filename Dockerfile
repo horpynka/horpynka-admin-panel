@@ -6,7 +6,7 @@ WORKDIR /app
 
 FROM base AS deps
 COPY package.json pnpm-lock.yaml ./
-RUN corepack prepare pnpm@latest --activate \
+RUN corepack prepare pnpm@10.34.4 --activate \
   && pnpm install --frozen-lockfile
 
 FROM base AS build
@@ -16,7 +16,7 @@ COPY . .
 ARG VITE_API_BASE_URL=/api
 ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 
-RUN corepack prepare pnpm@latest --activate \
+RUN corepack prepare pnpm@10.34.4 --activate \
   && pnpm build
 
 FROM nginx:1.27-alpine AS production
