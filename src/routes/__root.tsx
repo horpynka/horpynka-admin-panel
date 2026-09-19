@@ -1,4 +1,4 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
   Link,
@@ -6,9 +6,9 @@ import {
   useRouter,
   redirect,
 } from "@tanstack/react-router";
-// import { reportLovableError } from "../lib/lovable-error-reporting";
 
-import { getSession } from "@/lib/auth";
+import { ensureSession } from "@/lib/auth/session";
+import type { RouterContext } from "@/types/router";
 
 function NotFoundComponent() {
   return (
@@ -66,16 +66,20 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
-export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+export const Route = createRootRouteWithContext<RouterContext>()({
   component: RootComponent,
-  beforeLoad: ({ location }) => {
-    // Skip auth check for login page
-    if (location.pathname === "/login") return;
+  beforeLoad: async ({ context, location }) => {
+    const session = await ensureSession(context.queryClient);
 
-    const session = getSession();
-    if (!session) {
+    if (!session && location.pathname !== "/login") {
       throw redirect({ to: "/login" });
     }
+
+    if (session && location.pathname === "/login") {
+      throw redirect({ to: "/panel/dashboard" });
+    }
+
+    return { session };
   },
   notFoundComponent: NotFoundComponent,
   errorComponent: ErrorComponent,

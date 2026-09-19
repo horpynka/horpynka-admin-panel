@@ -7,13 +7,18 @@ import { DataTable, type DataTableColumn } from "@/components/common/data-table"
 import { StatusBadge } from "@/components/common/status-badge";
 import { EmptyState, ErrorState, LoadingState } from "@/components/common/states";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Card } from "@/components/ui/card";
 import { formatMoney, formatDateTime } from "@/lib/format";
 import { ORDER_STATUS_LABELS, ORDER_STATUS_TONES, type BadgeTone } from "@/lib/labels";
-import { ordersRepository } from "@/repositories/orders";
 import type { Order, OrderStatus } from "@/types/domain";
+import { useOrdersApi } from "@horpynka/api-sdk";
 
 export const Route = createFileRoute("/panel/orders/")({
   ssr: false,
@@ -33,10 +38,8 @@ function OrdersPage() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<OrderStatus | "ALL">("ALL");
 
-  const { data: orders, isLoading, isError } = useQuery({
-    queryKey: ["orders"],
-    queryFn: () => ordersRepository.getAll(),
-  });
+  const getOrders = useOrdersApi().getOrdersQuery;
+  const { data: orders, isLoading, isError } = useQuery(getOrders());
 
   if (isLoading) return <LoadingState />;
   if (isError) return <ErrorState message="Не вдалося завантажити чеки." />;
@@ -44,7 +47,8 @@ function OrdersPage() {
 
   const filteredOrders = orders.filter((order) => {
     const matchesSearch = search
-      ? String(order.id).includes(search) || order.status.toLowerCase().includes(search.toLowerCase())
+      ? String(order.id).includes(search) ||
+        order.status.toLowerCase().includes(search.toLowerCase())
       : true;
     const matchesStatus = statusFilter === "ALL" || order.status === statusFilter;
     return matchesSearch && matchesStatus;
@@ -136,7 +140,10 @@ function OrdersPage() {
               className="pl-9"
             />
           </div>
-          <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as OrderStatus | "ALL")}>
+          <Select
+            value={statusFilter}
+            onValueChange={(v) => setStatusFilter(v as OrderStatus | "ALL")}
+          >
             <SelectTrigger className="w-45">
               <SelectValue placeholder="Статус" />
             </SelectTrigger>
@@ -156,7 +163,9 @@ function OrdersPage() {
         columns={columns}
         rows={filteredOrders}
         rowKey={(row) => row.id}
-        onRowClick={(row) => navigate({ to: "/panel/orders/$orderId", params: { orderId: String(row.id) } })}
+        onRowClick={(row) =>
+          navigate({ to: "/panel/orders/$orderId", params: { orderId: String(row.id) } })
+        }
         emptyState={
           <EmptyState
             icon={Calendar}

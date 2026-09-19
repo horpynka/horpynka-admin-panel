@@ -16,6 +16,7 @@ import { StatusBadge } from "@/components/common/status-badge";
 import { formatMoney, formatDateTime } from "@/lib/format";
 import { CASH_SHIFT_STATUS_TONES, type BadgeTone } from "@/lib/labels";
 import { dashboardRepository } from "@/repositories/dashboard";
+import { useOrdersApi } from "@horpynka/api-sdk";
 
 export const Route = createFileRoute("/panel/dashboard")({
   ssr: false,

@@ -4,6 +4,9 @@ import { RouterProvider } from "@tanstack/react-router";
 
 import { getRouter } from "./router";
 import "./styles.css";
+import { initMain } from "./initMain";
+
+initMain();
 
 const router = getRouter();
 

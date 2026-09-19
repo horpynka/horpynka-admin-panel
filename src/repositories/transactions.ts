@@ -6,7 +6,10 @@ class TransactionsRepository {
     await this.simulateDelay();
 
     return mockOrders
-      .filter((order) => order.status === "CLOSED" || order.status === "PAID" || order.status === "REFUNDED")
+      .filter(
+        (order) =>
+          order.status === "CLOSED" || order.status === "PAID" || order.status === "REFUNDED",
+      )
       .map((order) => {
         const totalRefund = order.refundedWithCash + order.refundedWithCard;
         const kind = totalRefund > 0 ? "REFUND" : "SALE";

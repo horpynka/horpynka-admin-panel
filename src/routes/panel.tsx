@@ -1,10 +1,8 @@
-import { useEffect, useState } from "react";
-import { Outlet, createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Outlet, createFileRoute } from "@tanstack/react-router";
 
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { AppTopbar } from "@/components/layout/app-topbar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { getSession, type AuthSession } from "@/lib/auth";
 
 export const Route = createFileRoute("/panel")({
   ssr: false,
@@ -12,7 +10,7 @@ export const Route = createFileRoute("/panel")({
 });
 
 function PanelLayout() {
-  const [session, setSession] = useState<AuthSession | null>(getSession());
+  const { session } = Route.useRouteContext();
 
   if (!session) {
     return null;

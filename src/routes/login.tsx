@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -17,7 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { getSession, signIn } from "@/lib/auth";
+import { signIn } from "@/lib/auth/actions";
 
 export const Route = createFileRoute("/login")({
   ssr: false,
@@ -55,6 +55,7 @@ type LoginValues = z.infer<typeof loginSchema>;
 
 function LoginPage() {
   const navigate = useNavigate();
+  const { queryClient } = Route.useRouteContext();
   const [submitting, setSubmitting] = useState(false);
 
   const form = useForm<LoginValues>({
@@ -65,8 +66,7 @@ function LoginPage() {
   const onSubmit = async (values: LoginValues) => {
     setSubmitting(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 350));
-      signIn(values.email, values.password);
+      await signIn(queryClient, values.email, values.password);
       toast.success("Вхід виконано");
       navigate({ to: "/panel/dashboard", replace: true });
     } catch (error) {

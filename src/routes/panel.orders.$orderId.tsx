@@ -7,10 +7,17 @@ import { EmptyState, ErrorState, LoadingState } from "@/components/common/states
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { formatMoney, formatDateTime } from "@/lib/format";
 import { ORDER_STATUS_LABELS, ORDER_STATUS_TONES, type BadgeTone } from "@/lib/labels";
-import { ordersRepository } from "@/repositories/orders";
+import { useOrdersApi } from "@horpynka/api-sdk";
 
 export const Route = createFileRoute("/panel/orders/$orderId")({
   ssr: false,
@@ -28,24 +35,16 @@ export const Route = createFileRoute("/panel/orders/$orderId")({
 function OrderDetailsPage() {
   const { orderId } = Route.useParams();
   const navigate = useNavigate();
-  const orderIdNum = Number(orderId);
 
-  const { data: order, isLoading, isError } = useQuery({
-    queryKey: ["orders", orderIdNum],
-    queryFn: () => ordersRepository.getById(orderIdNum),
-    enabled: !isNaN(orderIdNum),
-  });
-
-  const { data: items } = useQuery({
-    queryKey: ["order-items", orderIdNum],
-    queryFn: () => ordersRepository.getOrderItemsWithDetails(orderIdNum),
-    enabled: !isNaN(orderIdNum),
-  });
+  const getOrder = useOrdersApi().getOrderQuery;
+  const { data: order, isLoading, isError } = useQuery(getOrder(Number(orderId)));
 
   if (isLoading) return <LoadingState />;
   if (isError || !order) {
     return <ErrorState message="Не вдалося завантажити чек або чек не знайдено." />;
   }
+
+  const { orderItems: items } = order;
 
   const totalRefund = order.refundedWithCash + order.refundedWithCard;
 
@@ -124,7 +123,9 @@ function OrderDetailsPage() {
                   <TableRow className="bg-secondary/60">
                     <TableHead className="text-xs font-semibold uppercase">Назва</TableHead>
                     <TableHead className="text-xs font-semibold uppercase">Тип</TableHead>
-                    <TableHead className="text-xs font-semibold uppercase text-right">Ціна</TableHead>
+                    <TableHead className="text-xs font-semibold uppercase text-right">
+                      Ціна
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -145,9 +146,9 @@ function OrderDetailsPage() {
               </Table>
             </div>
           )}
-          
+
           <Separator className="my-4" />
-          
+
           <div className="flex justify-between items-center text-lg font-bold">
             <span>Загальна сума:</span>
             <span>{formatMoney(order.orderPrice)}</span>

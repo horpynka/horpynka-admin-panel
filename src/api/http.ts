@@ -14,7 +14,7 @@ export const http = axios.create({
 
 http.interceptors.request.use((config) => {
   if (typeof window !== "undefined") {
-    const token = window.localStorage.getItem("pos-admin-token");
+    const token = window.localStorage.getItem("accessToken");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
