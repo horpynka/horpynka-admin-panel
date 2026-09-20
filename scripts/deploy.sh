@@ -3,6 +3,7 @@ set -euo pipefail
 
 DEPLOY_PATH="${DEPLOY_PATH:-/opt/horpynka-admin-panel}"
 GIT_REF="${GIT_REF:-main}"
+VITE_API_BASE_URL="${VITE_API_BASE_URL:-https://horpynka.com/api}"
 
 cd "${DEPLOY_PATH}"
 
