@@ -6,12 +6,18 @@ import { Clock } from "lucide-react";
 import { DataTable, type DataTableColumn } from "@/components/common/data-table";
 import { StatusBadge } from "@/components/common/status-badge";
 import { EmptyState, ErrorState, LoadingState } from "@/components/common/states";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Card } from "@/components/ui/card";
 import { formatMoney, formatDateTime } from "@/lib/format";
 import { CASH_SHIFT_STATUS_LABELS, CASH_SHIFT_STATUS_TONES, type BadgeTone } from "@/lib/labels";
-import { cashShiftsRepository } from "@/repositories/cash-shifts";
 import type { CashShift, CashShiftStatus } from "@/types/domain";
+import { useCashShiftsApi } from "@horpynka/api-sdk";
 
 export const Route = createFileRoute("/panel/cash-shifts")({
   ssr: false,
@@ -29,10 +35,8 @@ export const Route = createFileRoute("/panel/cash-shifts")({
 function CashShiftsPage() {
   const [statusFilter, setStatusFilter] = useState<CashShiftStatus | "ALL">("ALL");
 
-  const { data: shifts, isLoading, isError } = useQuery({
-    queryKey: ["cash-shifts"],
-    queryFn: () => cashShiftsRepository.getAll(),
-  });
+  const getShifts = useCashShiftsApi().getCashShiftsQuery;
+  const { data: shifts, isLoading, isError } = useQuery(getShifts());
 
   if (isLoading) return <LoadingState />;
   if (isError) return <ErrorState message="Не вдалося завантажити касові зміни." />;
@@ -110,14 +114,15 @@ function CashShiftsPage() {
     <div className="space-y-4">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Касові зміни</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Відкриття та закриття змін касирів.
-        </p>
+        <p className="mt-1 text-sm text-muted-foreground">Відкриття та закриття змін касирів.</p>
       </div>
 
       <Card className="p-4">
         <div className="flex flex-wrap gap-3">
-          <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as CashShiftStatus | "ALL")}>
+          <Select
+            value={statusFilter}
+            onValueChange={(v) => setStatusFilter(v as CashShiftStatus | "ALL")}
+          >
             <SelectTrigger className="w-45">
               <SelectValue placeholder="Статус" />
             </SelectTrigger>
