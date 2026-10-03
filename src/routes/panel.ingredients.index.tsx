@@ -10,8 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { measurementUnitLabel } from "@/lib/format";
-import { ingredientsRepository } from "@/repositories/ingredients";
 import type { Ingredient } from "@/types/domain";
+import { useIngredientsApi } from "@horpynka/api-sdk";
 
 export const Route = createFileRoute("/panel/ingredients/")({
   ssr: false,
@@ -30,10 +30,8 @@ function IngredientsPage() {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
 
-  const { data: ingredients, isLoading, isError } = useQuery({
-    queryKey: ["ingredients"],
-    queryFn: () => ingredientsRepository.getAll(),
-  });
+  const getIngredients = useIngredientsApi().getIngredientsQuery;
+  const { data: ingredients, isLoading, isError } = useQuery(getIngredients());
 
   if (isLoading) return <LoadingState />;
   if (isError) return <ErrorState message="Не вдалося завантажити інгредієнти." />;
@@ -70,9 +68,7 @@ function IngredientsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Інгредієнти</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Сировина та її облікові одиниці.
-          </p>
+          <p className="mt-1 text-sm text-muted-foreground">Сировина та її облікові одиниці.</p>
         </div>
         <Button onClick={() => navigate({ to: "/panel/ingredients/new" })}>
           <Plus className="h-4 w-4 mr-1" />
@@ -96,7 +92,12 @@ function IngredientsPage() {
         columns={columns}
         rows={filteredIngredients}
         rowKey={(row) => row.id}
-        onRowClick={(row) => navigate({ to: "/panel/ingredients/$ingredientId/edit", params: { ingredientId: String(row.id) } })}
+        onRowClick={(row) =>
+          navigate({
+            to: "/panel/ingredients/$ingredientId/edit",
+            params: { ingredientId: String(row.id) },
+          })
+        }
         emptyState={
           <EmptyState
             icon={FlaskConical}

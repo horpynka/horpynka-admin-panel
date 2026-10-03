@@ -7,7 +7,13 @@ import { DataTable, type DataTableColumn } from "@/components/common/data-table"
 import { StatusBadge } from "@/components/common/status-badge";
 import { EmptyState, ErrorState, LoadingState } from "@/components/common/states";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Card } from "@/components/ui/card";
 import { formatMoney, formatDateTime } from "@/lib/format";
 import {
@@ -16,8 +22,8 @@ import {
   PAYMENT_METHOD_LABELS,
   type BadgeTone,
 } from "@/lib/labels";
-import { transactionsRepository } from "@/repositories/transactions";
 import type { Transaction, TransactionKind, PaymentMethod } from "@/types/domain";
+import { useTransactionsApi } from "@horpynka/api-sdk";
 
 export const Route = createFileRoute("/panel/transactions")({
   ssr: false,
@@ -38,10 +44,8 @@ function TransactionsPage() {
   const [kindFilter, setKindFilter] = useState<TransactionKind | "ALL">("ALL");
   const [paymentFilter, setPaymentFilter] = useState<PaymentMethod | "ALL">("ALL");
 
-  const { data: transactions, isLoading, isError } = useQuery({
-    queryKey: ["transactions"],
-    queryFn: () => transactionsRepository.getAll(),
-  });
+  const getTransactions = useTransactionsApi().getTransactionsQuery;
+  const { data: transactions, isLoading, isError } = useQuery(getTransactions());
 
   if (isLoading) return <LoadingState />;
   if (isError) return <ErrorState message="Не вдалося завантажити транзакції." />;
@@ -118,9 +122,7 @@ function TransactionsPage() {
     <div className="space-y-4">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Транзакції</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Рух коштів по касах і терміналах.
-        </p>
+        <p className="mt-1 text-sm text-muted-foreground">Рух коштів по касах і терміналах.</p>
       </div>
 
       <Card className="p-4">
@@ -134,7 +136,10 @@ function TransactionsPage() {
               className="pl-9"
             />
           </div>
-          <Select value={kindFilter} onValueChange={(v) => setKindFilter(v as TransactionKind | "ALL")}>
+          <Select
+            value={kindFilter}
+            onValueChange={(v) => setKindFilter(v as TransactionKind | "ALL")}
+          >
             <SelectTrigger className="w-40">
               <SelectValue placeholder="Тип" />
             </SelectTrigger>
@@ -147,7 +152,10 @@ function TransactionsPage() {
               ))}
             </SelectContent>
           </Select>
-          <Select value={paymentFilter} onValueChange={(v) => setPaymentFilter(v as PaymentMethod | "ALL")}>
+          <Select
+            value={paymentFilter}
+            onValueChange={(v) => setPaymentFilter(v as PaymentMethod | "ALL")}
+          >
             <SelectTrigger className="w-45">
               <SelectValue placeholder="Спосіб оплати" />
             </SelectTrigger>
@@ -167,7 +175,9 @@ function TransactionsPage() {
         columns={columns}
         rows={filteredTransactions}
         rowKey={(row) => row.id}
-        onRowClick={(row) => navigate({ to: "/panel/orders/$orderId", params: { orderId: String(row.orderId) } })}
+        onRowClick={(row) =>
+          navigate({ to: "/panel/orders/$orderId", params: { orderId: String(row.orderId) } })
+        }
         emptyState={
           <EmptyState
             icon={ArrowDownUp}
