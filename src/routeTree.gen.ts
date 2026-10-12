@@ -19,6 +19,7 @@ import { Route as PanelInventoryRouteImport } from './routes/panel.inventory'
 import { Route as PanelSettingsRouteImport } from './routes/panel.settings'
 import { Route as PanelTransactionsRouteImport } from './routes/panel.transactions'
 import { Route as PanelDishesIndexRouteImport } from './routes/panel.dishes.index'
+import { Route as PanelDishesNewRouteImport } from './routes/panel.dishes.new'
 import { Route as PanelIngredientsIndexRouteImport } from './routes/panel.ingredients.index'
 import { Route as PanelMenuIndexRouteImport } from './routes/panel.menu.index'
 import { Route as PanelOrdersIndexRouteImport } from './routes/panel.orders.index'
@@ -76,6 +77,11 @@ const PanelDishesIndexRoute = PanelDishesIndexRouteImport.update({
   path: '/dishes/',
   getParentRoute: () => PanelRoute,
 } as any)
+const PanelDishesNewRoute = PanelDishesNewRouteImport.update({
+  id: '/dishes/new',
+  path: '/dishes/new',
+  getParentRoute: () => PanelRoute,
+} as any)
 const PanelIngredientsIndexRoute = PanelIngredientsIndexRouteImport.update({
   id: '/ingredients/',
   path: '/ingredients/',
@@ -117,6 +123,7 @@ export interface FileRoutesByFullPath {
   '/panel/settings': typeof PanelSettingsRoute
   '/panel/transactions': typeof PanelTransactionsRoute
   '/panel/': typeof PanelIndexRoute
+  '/panel/dishes/new': typeof PanelDishesNewRoute
   '/panel/orders/$orderId': typeof PanelOrdersOrderIdRoute
   '/panel/products/new': typeof PanelProductsNewRoute
   '/panel/dishes/': typeof PanelDishesIndexRoute
@@ -134,6 +141,7 @@ export interface FileRoutesByTo {
   '/panel/settings': typeof PanelSettingsRoute
   '/panel/transactions': typeof PanelTransactionsRoute
   '/panel': typeof PanelIndexRoute
+  '/panel/dishes/new': typeof PanelDishesNewRoute
   '/panel/orders/$orderId': typeof PanelOrdersOrderIdRoute
   '/panel/products/new': typeof PanelProductsNewRoute
   '/panel/dishes': typeof PanelDishesIndexRoute
@@ -153,6 +161,7 @@ export interface FileRoutesById {
   '/panel/settings': typeof PanelSettingsRoute
   '/panel/transactions': typeof PanelTransactionsRoute
   '/panel/': typeof PanelIndexRoute
+  '/panel/dishes/new': typeof PanelDishesNewRoute
   '/panel/orders/$orderId': typeof PanelOrdersOrderIdRoute
   '/panel/products/new': typeof PanelProductsNewRoute
   '/panel/dishes/': typeof PanelDishesIndexRoute
@@ -173,6 +182,7 @@ export interface FileRouteTypes {
     | '/panel/settings'
     | '/panel/transactions'
     | '/panel/'
+    | '/panel/dishes/new'
     | '/panel/orders/$orderId'
     | '/panel/products/new'
     | '/panel/dishes/'
@@ -190,6 +200,7 @@ export interface FileRouteTypes {
     | '/panel/settings'
     | '/panel/transactions'
     | '/panel'
+    | '/panel/dishes/new'
     | '/panel/orders/$orderId'
     | '/panel/products/new'
     | '/panel/dishes'
@@ -208,6 +219,7 @@ export interface FileRouteTypes {
     | '/panel/settings'
     | '/panel/transactions'
     | '/panel/'
+    | '/panel/dishes/new'
     | '/panel/orders/$orderId'
     | '/panel/products/new'
     | '/panel/dishes/'
@@ -295,6 +307,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PanelDishesIndexRouteImport
       parentRoute: typeof PanelRoute
     }
+    '/panel/dishes/new': {
+      id: '/panel/dishes/new'
+      path: '/dishes/new'
+      fullPath: '/panel/dishes/new'
+      preLoaderRoute: typeof PanelDishesNewRouteImport
+      parentRoute: typeof PanelRoute
+    }
     '/panel/ingredients/': {
       id: '/panel/ingredients/'
       path: '/ingredients'
@@ -347,6 +366,7 @@ interface PanelRouteChildren {
   PanelSettingsRoute: typeof PanelSettingsRoute
   PanelTransactionsRoute: typeof PanelTransactionsRoute
   PanelIndexRoute: typeof PanelIndexRoute
+  PanelDishesNewRoute: typeof PanelDishesNewRoute
   PanelOrdersOrderIdRoute: typeof PanelOrdersOrderIdRoute
   PanelProductsNewRoute: typeof PanelProductsNewRoute
   PanelDishesIndexRoute: typeof PanelDishesIndexRoute
@@ -363,6 +383,7 @@ const PanelRouteChildren: PanelRouteChildren = {
   PanelSettingsRoute: PanelSettingsRoute,
   PanelTransactionsRoute: PanelTransactionsRoute,
   PanelIndexRoute: PanelIndexRoute,
+  PanelDishesNewRoute: PanelDishesNewRoute,
   PanelOrdersOrderIdRoute: PanelOrdersOrderIdRoute,
   PanelProductsNewRoute: PanelProductsNewRoute,
   PanelDishesIndexRoute: PanelDishesIndexRoute,
