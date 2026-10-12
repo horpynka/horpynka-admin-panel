@@ -24,6 +24,7 @@ import { Route as PanelMenuIndexRouteImport } from './routes/panel.menu.index'
 import { Route as PanelOrdersIndexRouteImport } from './routes/panel.orders.index'
 import { Route as PanelOrdersOrderIdRouteImport } from './routes/panel.orders.$orderId'
 import { Route as PanelProductsIndexRouteImport } from './routes/panel.products.index'
+import { Route as PanelProductsNewRouteImport } from './routes/panel.products.new'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -100,6 +101,11 @@ const PanelProductsIndexRoute = PanelProductsIndexRouteImport.update({
   path: '/products/',
   getParentRoute: () => PanelRoute,
 } as any)
+const PanelProductsNewRoute = PanelProductsNewRouteImport.update({
+  id: '/products/new',
+  path: '/products/new',
+  getParentRoute: () => PanelRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -112,6 +118,7 @@ export interface FileRoutesByFullPath {
   '/panel/transactions': typeof PanelTransactionsRoute
   '/panel/': typeof PanelIndexRoute
   '/panel/orders/$orderId': typeof PanelOrdersOrderIdRoute
+  '/panel/products/new': typeof PanelProductsNewRoute
   '/panel/dishes/': typeof PanelDishesIndexRoute
   '/panel/ingredients/': typeof PanelIngredientsIndexRoute
   '/panel/menu/': typeof PanelMenuIndexRoute
@@ -128,6 +135,7 @@ export interface FileRoutesByTo {
   '/panel/transactions': typeof PanelTransactionsRoute
   '/panel': typeof PanelIndexRoute
   '/panel/orders/$orderId': typeof PanelOrdersOrderIdRoute
+  '/panel/products/new': typeof PanelProductsNewRoute
   '/panel/dishes': typeof PanelDishesIndexRoute
   '/panel/ingredients': typeof PanelIngredientsIndexRoute
   '/panel/menu': typeof PanelMenuIndexRoute
@@ -146,6 +154,7 @@ export interface FileRoutesById {
   '/panel/transactions': typeof PanelTransactionsRoute
   '/panel/': typeof PanelIndexRoute
   '/panel/orders/$orderId': typeof PanelOrdersOrderIdRoute
+  '/panel/products/new': typeof PanelProductsNewRoute
   '/panel/dishes/': typeof PanelDishesIndexRoute
   '/panel/ingredients/': typeof PanelIngredientsIndexRoute
   '/panel/menu/': typeof PanelMenuIndexRoute
@@ -165,6 +174,7 @@ export interface FileRouteTypes {
     | '/panel/transactions'
     | '/panel/'
     | '/panel/orders/$orderId'
+    | '/panel/products/new'
     | '/panel/dishes/'
     | '/panel/ingredients/'
     | '/panel/menu/'
@@ -181,6 +191,7 @@ export interface FileRouteTypes {
     | '/panel/transactions'
     | '/panel'
     | '/panel/orders/$orderId'
+    | '/panel/products/new'
     | '/panel/dishes'
     | '/panel/ingredients'
     | '/panel/menu'
@@ -198,6 +209,7 @@ export interface FileRouteTypes {
     | '/panel/transactions'
     | '/panel/'
     | '/panel/orders/$orderId'
+    | '/panel/products/new'
     | '/panel/dishes/'
     | '/panel/ingredients/'
     | '/panel/menu/'
@@ -318,6 +330,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PanelProductsIndexRouteImport
       parentRoute: typeof PanelRoute
     }
+    '/panel/products/new': {
+      id: '/panel/products/new'
+      path: '/products/new'
+      fullPath: '/panel/products/new'
+      preLoaderRoute: typeof PanelProductsNewRouteImport
+      parentRoute: typeof PanelRoute
+    }
   }
 }
 
@@ -329,6 +348,7 @@ interface PanelRouteChildren {
   PanelTransactionsRoute: typeof PanelTransactionsRoute
   PanelIndexRoute: typeof PanelIndexRoute
   PanelOrdersOrderIdRoute: typeof PanelOrdersOrderIdRoute
+  PanelProductsNewRoute: typeof PanelProductsNewRoute
   PanelDishesIndexRoute: typeof PanelDishesIndexRoute
   PanelIngredientsIndexRoute: typeof PanelIngredientsIndexRoute
   PanelMenuIndexRoute: typeof PanelMenuIndexRoute
@@ -344,6 +364,7 @@ const PanelRouteChildren: PanelRouteChildren = {
   PanelTransactionsRoute: PanelTransactionsRoute,
   PanelIndexRoute: PanelIndexRoute,
   PanelOrdersOrderIdRoute: PanelOrdersOrderIdRoute,
+  PanelProductsNewRoute: PanelProductsNewRoute,
   PanelDishesIndexRoute: PanelDishesIndexRoute,
   PanelIngredientsIndexRoute: PanelIngredientsIndexRoute,
   PanelMenuIndexRoute: PanelMenuIndexRoute,
