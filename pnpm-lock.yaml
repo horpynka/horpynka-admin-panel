@@ -15,8 +15,13 @@ importers:
         specifier: ^5.2.2
         version: 5.9.1(react-hook-form@7.88.0(react@19.3.0))(zod@3.25.76)
       '@horpynka/api-sdk':
+<<<<<<< Updated upstream
         specifier: 1.0.11
         version: 1.0.11(@tanstack/react-query@5.103.1(react@19.3.0))(axios@1.20.0)(react@19.3.0)
+=======
+        specifier: 1.0.16
+        version: 1.0.16(@tanstack/react-query@5.103.1(react@19.3.0))(axios@1.20.0)(react@19.3.0)
+>>>>>>> Stashed changes
       '@radix-ui/react-accordion':
         specifier: ^1.2.12
         version: 1.2.20(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -468,8 +473,13 @@ packages:
       zod:
         optional: true
 
+<<<<<<< Updated upstream
   '@horpynka/api-sdk@1.0.11':
     resolution: {integrity: sha512-Mq+ru0lA6ILggU37Myjk6yuICjEGmRzYb5hRH6r/rVn47vLN+qGKIfxM+yobPlVt0jRHaHHHqQHz36h5zyevuw==}
+=======
+  '@horpynka/api-sdk@1.0.16':
+    resolution: {integrity: sha512-QTIE58gN7ydDLmMj3QXEvPfOzgREb5UeY+di6QzSWfBHsvT2E6aaEljLse1kBR0OTL11BGPF8Z10lqIu4LWrgQ==}
+>>>>>>> Stashed changes
     engines: {node: '>=22'}
     peerDependencies:
       '@tanstack/react-query': ^5.0.0
@@ -3452,7 +3462,11 @@ snapshots:
     optionalDependencies:
       zod: 3.25.76
 
+<<<<<<< Updated upstream
   '@horpynka/api-sdk@1.0.11(@tanstack/react-query@5.103.1(react@19.3.0))(axios@1.20.0)(react@19.3.0)':
+=======
+  '@horpynka/api-sdk@1.0.16(@tanstack/react-query@5.103.1(react@19.3.0))(axios@1.20.0)(react@19.3.0)':
+>>>>>>> Stashed changes
     dependencies:
       '@tanstack/react-query': 5.103.1(react@19.3.0)
       axios: 1.20.0
