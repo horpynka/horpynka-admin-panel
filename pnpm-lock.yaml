@@ -15,8 +15,8 @@ importers:
         specifier: ^5.2.2
         version: 5.9.1(react-hook-form@7.88.0(react@19.3.0))(zod@3.25.76)
       '@horpynka/api-sdk':
-        specifier: 1.0.14
-        version: 1.0.14(@tanstack/react-query@5.103.1(react@19.3.0))(axios@1.20.0)(react@19.3.0)
+        specifier: 1.0.18
+        version: 1.0.18(@tanstack/react-query@5.103.1(react@19.3.0))(axios@1.20.0)(react@19.3.0)
       '@radix-ui/react-accordion':
         specifier: ^1.2.12
         version: 1.2.20(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -468,8 +468,8 @@ packages:
       zod:
         optional: true
 
-  '@horpynka/api-sdk@1.0.14':
-    resolution: {integrity: sha512-FelkMAZgl05QPmJ1WyZtBA5x9odTzMAND0flqYXh3wcW/ObCIx2pNHoTYt7uBvO2qvZ8eMrfmqPG5pmqL8+H8w==}
+  '@horpynka/api-sdk@1.0.18':
+    resolution: {integrity: sha512-41LQY7Cpmrw4fLv/IeY9mz90BkU9N0eV5alaZfhh+jo6jzOfOchvfKQChMxvSP0d33JCJpfZpVykBHtWB33/mg==}
     engines: {node: '>=22'}
     peerDependencies:
       '@tanstack/react-query': ^5.0.0
@@ -3452,7 +3452,7 @@ snapshots:
     optionalDependencies:
       zod: 3.25.76
 
-  '@horpynka/api-sdk@1.0.14(@tanstack/react-query@5.103.1(react@19.3.0))(axios@1.20.0)(react@19.3.0)':
+  '@horpynka/api-sdk@1.0.18(@tanstack/react-query@5.103.1(react@19.3.0))(axios@1.20.0)(react@19.3.0)':
     dependencies:
       '@tanstack/react-query': 5.103.1(react@19.3.0)
       axios: 1.20.0
