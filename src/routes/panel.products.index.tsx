@@ -10,9 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatMoney, formatDateTime } from "@/lib/format";
-import { productsRepository } from "@/repositories/products";
-import { categoriesRepository } from "@/repositories/categories";
 import type { Product } from "@/types/domain";
+import { useCategoriesApi, useProductsApi } from "@horpynka/api-sdk";
 
 export const Route = createFileRoute("/panel/products/")({
   ssr: false,
@@ -31,15 +30,11 @@ function ProductsPage() {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
 
-  const { data: products, isLoading, isError } = useQuery({
-    queryKey: ["products"],
-    queryFn: () => productsRepository.getAll(),
-  });
+  const getProducts = useProductsApi().getProductsQuery;
+  const { data: products, isLoading, isError } = useQuery(getProducts());
 
-  const { data: categories } = useQuery({
-    queryKey: ["categories"],
-    queryFn: () => categoriesRepository.getAll(),
-  });
+  const getCategories = useCategoriesApi().getCategoriesQuery;
+  const { data: categories } = useQuery(getCategories());
 
   if (isLoading) return <LoadingState />;
   if (isError) return <ErrorState message="Не вдалося завантажити товари." />;
@@ -47,7 +42,11 @@ function ProductsPage() {
 
   const getCategoryName = (categoryId: number | null) => {
     if (!categoryId || !categories) return "—";
-    return categories.find((c) => c.id === categoryId)?.name ?? "—";
+    return (
+      [...categories.dishesCategories, ...categories.productsCategories].find(
+        (c) => c.id === categoryId,
+      )?.name ?? "—"
+    );
   };
 
   const filteredProducts = products.filter((product) => {
@@ -143,7 +142,9 @@ function ProductsPage() {
         columns={columns}
         rows={filteredProducts}
         rowKey={(row) => row.id}
-        onRowClick={(row) => navigate({ to: "/panel/products/$productId/edit", params: { productId: String(row.id) } })}
+        onRowClick={(row) =>
+          navigate({ to: "/panel/products/$productId/edit", params: { productId: String(row.id) } })
+        }
         emptyState={
           <EmptyState
             icon={Package}

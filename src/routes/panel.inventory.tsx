@@ -6,12 +6,18 @@ import { ClipboardList } from "lucide-react";
 import { DataTable, type DataTableColumn } from "@/components/common/data-table";
 import { StatusBadge } from "@/components/common/status-badge";
 import { EmptyState, ErrorState, LoadingState } from "@/components/common/states";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDateTime, formatQuantity } from "@/lib/format";
 import { INVENTORY_STATUS_LABELS, INVENTORY_STATUS_TONES, type BadgeTone } from "@/lib/labels";
-import { inventoryRepository } from "@/repositories/inventory";
 import type { Inventory, InventoryStatus } from "@/types/domain";
+import { useInventoryApi } from "@horpynka/api-sdk";
 
 export const Route = createFileRoute("/panel/inventory")({
   ssr: false,
@@ -30,10 +36,8 @@ function InventoryPage() {
   const [statusFilter, setStatusFilter] = useState<InventoryStatus | "ALL">("ALL");
   const [selectedInventory, setSelectedInventory] = useState<Inventory | null>(null);
 
-  const { data: inventories, isLoading, isError } = useQuery({
-    queryKey: ["inventories"],
-    queryFn: () => inventoryRepository.getAll(),
-  });
+  const getInventories = useInventoryApi().getInventoriesQuery;
+  const { data: inventories, isLoading, isError } = useQuery(getInventories());
 
   if (isLoading) return <LoadingState />;
   if (isError) return <ErrorState message="Не вдалося завантажити інвентаризації." />;
@@ -137,9 +141,7 @@ function InventoryPage() {
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle className="text-base">
-                Інвентаризація #{selectedInventory.id}
-              </CardTitle>
+              <CardTitle className="text-base">Інвентаризація #{selectedInventory.id}</CardTitle>
               <StatusBadge tone={INVENTORY_STATUS_TONES[selectedInventory.status] as BadgeTone}>
                 {INVENTORY_STATUS_LABELS[selectedInventory.status]}
               </StatusBadge>
@@ -164,12 +166,14 @@ function InventoryPage() {
                     <div className="flex-1">
                       <div className="font-medium">{item.name}</div>
                       <div className="text-sm text-muted-foreground">
-                        Очікувано: {formatQuantity(item.expectedQuantity, item.measurementUnit)} · 
+                        Очікувано: {formatQuantity(item.expectedQuantity, item.measurementUnit)} ·
                         Фактично: {formatQuantity(item.actualQuantity, item.measurementUnit)}
                       </div>
                     </div>
                     {hasDifference && (
-                      <div className={`text-sm font-semibold ${difference > 0 ? "text-success" : "text-destructive"}`}>
+                      <div
+                        className={`text-sm font-semibold ${difference > 0 ? "text-success" : "text-destructive"}`}
+                      >
                         {difference > 0 ? "+" : ""}
                         {formatQuantity(Math.abs(difference), item.measurementUnit)}
                       </div>

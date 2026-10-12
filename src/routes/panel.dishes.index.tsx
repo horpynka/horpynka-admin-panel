@@ -10,9 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatMoney, formatDateTime } from "@/lib/format";
-import { dishesRepository } from "@/repositories/dishes";
-import { categoriesRepository } from "@/repositories/categories";
 import type { Dish } from "@/types/domain";
+import { useCategoriesApi, useDishesApi } from "@horpynka/api-sdk";
 
 export const Route = createFileRoute("/panel/dishes/")({
   ssr: false,
@@ -31,15 +30,11 @@ function DishesPage() {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
 
-  const { data: dishes, isLoading, isError } = useQuery({
-    queryKey: ["dishes"],
-    queryFn: () => dishesRepository.getAll(),
-  });
+  const getDishes = useDishesApi().getDishesQuery;
+  const { data: dishes, isLoading, isError } = useQuery(getDishes());
 
-  const { data: categories } = useQuery({
-    queryKey: ["categories"],
-    queryFn: () => categoriesRepository.getAll(),
-  });
+  const getCategories = useCategoriesApi().getCategoriesQuery;
+  const { data: categories } = useQuery(getCategories());
 
   if (isLoading) return <LoadingState />;
   if (isError) return <ErrorState message="Не вдалося завантажити страви." />;
@@ -47,7 +42,11 @@ function DishesPage() {
 
   const getCategoryName = (categoryId: number | null) => {
     if (!categoryId || !categories) return "—";
-    return categories.find((c) => c.id === categoryId)?.name ?? "—";
+    return (
+      [...categories.dishesCategories, ...categories.productsCategories].find(
+        (c) => c.id === categoryId,
+      )?.name ?? "—"
+    );
   };
 
   const filteredDishes = dishes.filter((dish) => {
@@ -143,7 +142,9 @@ function DishesPage() {
         columns={columns}
         rows={filteredDishes}
         rowKey={(row) => row.id}
-        onRowClick={(row) => navigate({ to: "/panel/dishes/$dishId/edit", params: { dishId: String(row.id) } })}
+        onRowClick={(row) =>
+          navigate({ to: "/panel/dishes/$dishId/edit", params: { dishId: String(row.id) } })
+        }
         emptyState={
           <EmptyState
             icon={UtensilsCrossed}

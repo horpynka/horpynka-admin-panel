@@ -10,9 +10,8 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatMoney } from "@/lib/format";
 import { MENU_ITEM_KIND_LABELS } from "@/lib/labels";
-import { menuRepository } from "@/repositories/menu";
-import { categoriesRepository } from "@/repositories/categories";
 import type { MenuItem } from "@/types/domain";
+import { useCategoriesApi, useMenuApi } from "@horpynka/api-sdk";
 
 export const Route = createFileRoute("/panel/menu/")({
   ssr: false,
@@ -31,15 +30,12 @@ function MenuPage() {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
 
-  const { data: menuItems, isLoading, isError } = useQuery({
-    queryKey: ["menu"],
-    queryFn: () => menuRepository.getAll(),
-  });
+  const getMenu = useMenuApi().getMenuQuery;
+  const { data: menuItems, isLoading, isError } = useQuery(getMenu());
 
-  const { data: categories } = useQuery({
-    queryKey: ["categories"],
-    queryFn: () => categoriesRepository.getAll(),
-  });
+  const getCategories = useCategoriesApi().getCategoriesQuery;
+
+  const { data: categories } = useQuery(getCategories());
 
   if (isLoading) return <LoadingState />;
   if (isError) return <ErrorState message="Не вдалося завантажити меню." />;
@@ -47,7 +43,11 @@ function MenuPage() {
 
   const getCategoryName = (categoryId: number | null) => {
     if (!categoryId || !categories) return "—";
-    return categories.find((c) => c.id === categoryId)?.name ?? "—";
+    return (
+      [...categories.dishesCategories, ...categories.productsCategories].find(
+        (c) => c.id === categoryId,
+      )?.name ?? "—"
+    );
   };
 
   const filteredItems = menuItems.filter((item) => {
@@ -98,9 +98,7 @@ function MenuPage() {
     <div className="space-y-4">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Меню</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Позиції, доступні на касі.
-        </p>
+        <p className="mt-1 text-sm text-muted-foreground">Позиції, доступні на касі.</p>
       </div>
 
       <Card className="p-4">
@@ -121,9 +119,15 @@ function MenuPage() {
         rowKey={(row) => row.id}
         onRowClick={(row) => {
           if (row.kind === "DISH") {
-            navigate({ to: "/panel/dishes/$dishId/edit", params: { dishId: String(row.entityId) } });
+            navigate({
+              to: "/panel/dishes/$dishId/edit",
+              params: { dishId: String(row.entityId) },
+            });
           } else {
-            navigate({ to: "/panel/products/$productId/edit", params: { productId: String(row.entityId) } });
+            navigate({
+              to: "/panel/products/$productId/edit",
+              params: { productId: String(row.entityId) },
+            });
           }
         }}
         emptyState={

@@ -1,22 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import {
-  TrendingUp,
-  ShoppingCart,
-  Clock,
-  CheckCircle,
-  Wallet,
-  CreditCard,
-  AlertTriangle,
-} from "lucide-react";
+import { TrendingUp, ShoppingCart, Clock, Wallet, CreditCard, AlertTriangle } from "lucide-react";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ErrorState, LoadingState } from "@/components/common/states";
 import { StatusBadge } from "@/components/common/status-badge";
 import { formatMoney, formatDateTime } from "@/lib/format";
 import { CASH_SHIFT_STATUS_TONES, type BadgeTone } from "@/lib/labels";
-import { dashboardRepository } from "@/repositories/dashboard";
-import { useOrdersApi } from "@horpynka/api-sdk";
+import { useDashboardApi } from "@horpynka/api-sdk";
 
 export const Route = createFileRoute("/panel/dashboard")({
   ssr: false,
@@ -32,14 +23,9 @@ export const Route = createFileRoute("/panel/dashboard")({
 });
 
 function DashboardPage() {
-  const {
-    data: stats,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["dashboard-stats"],
-    queryFn: () => dashboardRepository.getStats(),
-  });
+  const getStats = useDashboardApi().getStatsQuery;
+
+  const { data: stats, isLoading, isError } = useQuery(getStats());
 
   if (isLoading) return <LoadingState />;
   if (isError) return <ErrorState message="Не вдалося завантажити статистику." />;
