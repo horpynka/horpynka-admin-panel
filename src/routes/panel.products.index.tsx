@@ -9,9 +9,35 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { formatMoney, formatDateTime } from "@/lib/format";
-import type { Product } from "@/types/domain";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { formatMoney, formatDateTime, measurementUnitLabel } from "@/lib/format";
+import type { MeasurementUnit } from "@/types/domain";
 import { useCategoriesApi, useProductsApi } from "@horpynka/api-sdk";
+
+type SellingFilter = "all" | "selling" | "not-selling";
+
+function collectCategories(categories: {
+  dishesCategories: ReadonlyArray<{ id: number; name: string }>;
+  productsCategories: ReadonlyArray<{ id: number; name: string }>;
+}) {
+  const byId = new Map<number, { id: number; name: string }>();
+  for (const category of [...categories.dishesCategories, ...categories.productsCategories]) {
+    if (!byId.has(category.id)) {
+      byId.set(category.id, { id: category.id, name: category.name });
+    }
+  }
+  return [...byId.values()];
+}
+
+function isMeasurementUnit(value: string): value is MeasurementUnit {
+  return value === "g" || value === "ml" || value === "pcs";
+}
 
 export const Route = createFileRoute("/panel/products/")({
   ssr: false,
@@ -29,6 +55,8 @@ export const Route = createFileRoute("/panel/products/")({
 function ProductsPage() {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [sellingFilter, setSellingFilter] = useState<SellingFilter>("all");
 
   const getProducts = useProductsApi().getProductsQuery;
   const { data: products, isLoading, isError } = useQuery(getProducts());
@@ -49,15 +77,22 @@ function ProductsPage() {
     );
   };
 
+  const categoryOptions = categories ? collectCategories(categories) : [];
+
   const filteredProducts = products.filter((product) => {
-    const matchesSearch = search
-      ? product.name.toLowerCase().includes(search.toLowerCase()) ||
-        getCategoryName(product.categoryId).toLowerCase().includes(search.toLowerCase())
+    const query = search.trim().toLowerCase();
+    const matchesSearch = query
+      ? product.name.toLowerCase().includes(query) ||
+        getCategoryName(product.categoryId).toLowerCase().includes(query)
       : true;
-    return matchesSearch;
+    const matchesCategory =
+      categoryFilter === "all" || product.categoryId === Number(categoryFilter);
+    const matchesSelling =
+      sellingFilter === "all" || (sellingFilter === "selling" ? product.selling : !product.selling);
+    return matchesSearch && matchesCategory && matchesSelling;
   });
 
-  const columns: DataTableColumn<Product>[] = [
+  const columns: DataTableColumn<(typeof products)[number]>[] = [
     {
       id: "name",
       header: "Назва",
@@ -72,6 +107,14 @@ function ProductsPage() {
       ),
       sortValue: (row) => getCategoryName(row.categoryId),
       hideBelow: "md",
+    },
+    {
+      id: "measurementUnit",
+      header: "Фасування",
+      cell: (row) =>
+        isMeasurementUnit(row.measurementUnit) ? measurementUnitLabel(row.measurementUnit) : "—",
+      sortValue: (row) =>
+        isMeasurementUnit(row.measurementUnit) ? measurementUnitLabel(row.measurementUnit) : "",
     },
     {
       id: "ownPrice",
@@ -127,14 +170,42 @@ function ProductsPage() {
       </div>
 
       <Card className="p-4">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Пошук за назвою або категорією..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-9"
-          />
+        <div className="flex flex-wrap gap-3">
+          <div className="relative min-w-50 flex-1">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Пошук за назвою або категорією..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+            <SelectTrigger className="w-48" aria-label="Категорія">
+              <SelectValue placeholder="Категорія" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Усі</SelectItem>
+              {categoryOptions.map((category) => (
+                <SelectItem key={category.id} value={String(category.id)}>
+                  {category.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select
+            value={sellingFilter}
+            onValueChange={(value) => setSellingFilter(value as SellingFilter)}
+          >
+            <SelectTrigger className="w-44" aria-label="Статус">
+              <SelectValue placeholder="Статус" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Усі</SelectItem>
+              <SelectItem value="selling">Продається</SelectItem>
+              <SelectItem value="not-selling">Не продається</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </Card>
 
@@ -146,17 +217,24 @@ function ProductsPage() {
           navigate({ to: "/panel/products/$productId/edit", params: { productId: String(row.id) } })
         }
         emptyState={
-          <EmptyState
-            icon={Package}
-            title="Товарів поки немає"
-            description="Додайте перший товар до каталогу."
-            action={
-              <Button onClick={() => navigate({ to: "/panel/products/new" })}>
-                <Plus className="h-4 w-4 mr-1" />
-                Додати товар
-              </Button>
-            }
-          />
+          products.length === 0 ? (
+            <EmptyState
+              icon={Package}
+              title="Товарів поки немає"
+              description="Додайте перший товар до каталогу."
+              action={
+                <Button onClick={() => navigate({ to: "/panel/products/new" })}>
+                  <Plus className="h-4 w-4 mr-1" />
+                  Додати товар
+                </Button>
+              }
+            />
+          ) : (
+            <EmptyState
+              title="Нічого не знайдено"
+              description="Змініть пошук або фільтри, щоб побачити товари."
+            />
+          )
         }
       />
     </div>
