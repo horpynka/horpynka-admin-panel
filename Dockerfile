@@ -5,9 +5,10 @@ RUN corepack enable
 WORKDIR /app
 
 FROM base AS deps
-COPY package.json pnpm-lock.yaml ./
-RUN corepack prepare pnpm@10.34.4 --activate \
-  && pnpm install --frozen-lockfile
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+RUN corepack prepare yarn@1.22.22 --activate \
+    && corepack prepare pnpm@10.34.4 --activate \
+    && pnpm install --frozen-lockfile
 
 FROM base AS build
 COPY --from=deps /app/node_modules ./node_modules
