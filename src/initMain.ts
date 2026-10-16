@@ -1,5 +1,6 @@
 import { initApiClient } from "@horpynka/api-sdk";
 
+import { registerSdkHttp } from "@/api/sdk-http";
 import { installAuthInterceptors } from "@/lib/auth/interceptors";
 
 export const initMain = () => {
@@ -10,4 +11,5 @@ export const initMain = () => {
 
   apiClient.defaults.withCredentials = true;
   installAuthInterceptors(apiClient);
+  registerSdkHttp(apiClient);
 };
