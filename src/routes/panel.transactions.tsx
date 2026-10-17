@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowDownUp, Search } from "lucide-react";
+import { Download, Search } from "lucide-react";
 
 import { DataTable, type DataTableColumn } from "@/components/common/data-table";
+import { DateRangeFilter, type DateRange } from "@/components/common/date-range-filter";
 import { StatusBadge } from "@/components/common/status-badge";
 import { EmptyState, ErrorState, LoadingState } from "@/components/common/states";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -20,10 +22,9 @@ import {
   TRANSACTION_KIND_LABELS,
   TRANSACTION_KIND_TONES,
   PAYMENT_METHOD_LABELS,
-  type BadgeTone,
 } from "@/lib/labels";
 import type { Transaction, TransactionKind, PaymentMethod } from "@/types/domain";
-import { useTransactionsApi } from "@horpynka/api-sdk";
+import { transactionsApi } from "@horpynka/api-sdk";
 
 export const Route = createFileRoute("/panel/transactions")({
   ssr: false,
@@ -38,20 +39,29 @@ export const Route = createFileRoute("/panel/transactions")({
   component: TransactionsPage,
 });
 
+const EMPTY_RANGE: DateRange = { from: "", to: "" };
+
 function TransactionsPage() {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [kindFilter, setKindFilter] = useState<TransactionKind | "ALL">("ALL");
   const [paymentFilter, setPaymentFilter] = useState<PaymentMethod | "ALL">("ALL");
+  const [dateRange, setDateRange] = useState<DateRange>(EMPTY_RANGE);
 
-  const getTransactions = useTransactionsApi().getTransactionsQuery;
-  const { data: transactions, isLoading, isError } = useQuery(getTransactions());
+  const {
+    data: transactions,
+    isLoading,
+    isError,
+    isFetching,
+  } = useQuery({
+    queryKey: ["transactions", dateRange.from, dateRange.to],
+    queryFn: () =>
+      transactionsApi
+        .findAll({ params: dateQueryParams(dateRange) })
+        .then((response) => response.data),
+  });
 
-  if (isLoading) return <LoadingState />;
-  if (isError) return <ErrorState message="Не вдалося завантажити транзакції." />;
-  if (!transactions) return null;
-
-  const filteredTransactions = transactions.filter((transaction) => {
+  const filteredTransactions = (transactions ?? []).filter((transaction) => {
     const matchesSearch = search
       ? String(transaction.orderId).includes(search) ||
         TRANSACTION_KIND_LABELS[transaction.kind].toLowerCase().includes(search.toLowerCase())
@@ -79,9 +89,10 @@ function TransactionsPage() {
       id: "kind",
       header: "Тип",
       cell: (row) => (
-        <StatusBadge tone={TRANSACTION_KIND_TONES[row.kind] as BadgeTone}>
-          {TRANSACTION_KIND_LABELS[row.kind]}
-        </StatusBadge>
+        <StatusBadge
+          tone={TRANSACTION_KIND_TONES[row.kind]}
+          label={TRANSACTION_KIND_LABELS[row.kind]}
+        />
       ),
       sortValue: (row) => row.kind,
     },
@@ -125,9 +136,10 @@ function TransactionsPage() {
         <p className="mt-1 text-sm text-muted-foreground">Рух коштів по касах і терміналах.</p>
       </div>
 
-      <Card className="p-4">
-        <div className="flex flex-wrap gap-3">
-          <div className="relative flex-1 min-w-50">
+      <Card className="space-y-3 p-4">
+        <DateRangeFilter value={dateRange} onChange={setDateRange} />
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="relative min-w-50 flex-1">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Пошук за номером чека..."
@@ -168,24 +180,81 @@ function TransactionsPage() {
               ))}
             </SelectContent>
           </Select>
+          <Button
+            type="button"
+            variant="outline"
+            className="ml-auto"
+            disabled={!transactions || isFetching}
+            onClick={() => downloadTransactionsCsv(filteredTransactions)}
+          >
+            <Download />
+            Вивантажити CSV
+          </Button>
         </div>
       </Card>
 
-      <DataTable
-        columns={columns}
-        rows={filteredTransactions}
-        rowKey={(row) => row.id}
-        onRowClick={(row) =>
-          navigate({ to: "/panel/orders/$orderId", params: { orderId: String(row.orderId) } })
-        }
-        emptyState={
-          <EmptyState
-            icon={ArrowDownUp}
-            title="Транзакцій поки немає"
-            description="Тут з'являться всі фінансові операції."
-          />
-        }
-      />
+      {isLoading ? (
+        <LoadingState />
+      ) : isError ? (
+        <ErrorState message="Не вдалося завантажити транзакції." />
+      ) : (
+        <DataTable
+          columns={columns}
+          rows={filteredTransactions}
+          rowKey={(row) => row.id}
+          onRowClick={(row) =>
+            navigate({ to: "/panel/orders/$orderId", params: { orderId: String(row.orderId) } })
+          }
+          emptyState={
+            <EmptyState
+              title="Транзакцій поки немає"
+              description="Тут з'являться всі фінансові операції."
+            />
+          }
+        />
+      )}
     </div>
   );
+}
+
+function dateQueryParams(range: DateRange): { from?: string; to?: string } | undefined {
+  const params: { from?: string; to?: string } = {};
+  if (range.from) params.from = range.from;
+  if (range.to) params.to = range.to;
+  return params.from || params.to ? params : undefined;
+}
+
+const CSV_HEADERS = [
+  "Дата",
+  "Замовлення",
+  "Тип",
+  "Спосіб оплати",
+  "Сума (коп.)",
+  "Повернення (коп.)",
+];
+
+function downloadTransactionsCsv(rows: Transaction[]) {
+  const lines = [
+    CSV_HEADERS,
+    ...rows.map((row) => [
+      formatDateTime(row.createdAt),
+      `#${row.orderId}`,
+      TRANSACTION_KIND_LABELS[row.kind],
+      PAYMENT_METHOD_LABELS[row.paymentMethod],
+      String(row.amount),
+      String(row.refundedAmount),
+    ]),
+  ];
+  const csv = lines.map((line) => line.map(csvCell).join(",")).join("\r\n");
+  const blob = new Blob(["\uFEFF", csv], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "transactions.csv";
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+function csvCell(value: string): string {
+  return `"${value.replaceAll('"', '""')}"`;
 }
