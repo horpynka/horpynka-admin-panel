@@ -7,7 +7,8 @@ import {
   redirect,
 } from "@tanstack/react-router";
 
-import { ensureSession } from "@/lib/auth/session";
+import { sessionHasPanelAccess, sessionQueryKey, ensureSession } from "@/lib/auth/session";
+import { clearAccessToken } from "@/lib/auth/tokens";
 import type { RouterContext } from "@/types/router";
 
 function NotFoundComponent() {
@@ -69,7 +70,13 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 export const Route = createRootRouteWithContext<RouterContext>()({
   component: RootComponent,
   beforeLoad: async ({ context, location }) => {
-    const session = await ensureSession(context.queryClient);
+    let session = await ensureSession(context.queryClient);
+
+    if (session && !sessionHasPanelAccess(session)) {
+      clearAccessToken();
+      context.queryClient.removeQueries({ queryKey: sessionQueryKey });
+      session = null;
+    }
 
     if (!session && location.pathname !== "/login") {
       throw redirect({ to: "/login" });
