@@ -27,6 +27,40 @@ export const ORDER_STATUS_TONES: Record<OrderStatus, BadgeTone> = {
   CANCELED: "neutral",
 };
 
+/** Statuses accepted by PATCH /orders/:id and GET /orders. */
+export const RECEIPT_STATUSES = [
+  "CREATED",
+  "PAID",
+  "COMPLETED",
+  "CANCELLED",
+  "REFUNDED",
+  "DELETED",
+] as const;
+
+export type ReceiptStatus = (typeof RECEIPT_STATUSES)[number];
+
+export const RECEIPT_STATUS_LABELS: Record<ReceiptStatus, string> = {
+  CREATED: "Створений",
+  PAID: "Оплачений",
+  COMPLETED: "Завершений",
+  CANCELLED: "Скасований",
+  REFUNDED: "Повернений",
+  DELETED: "Видалений",
+};
+
+export const RECEIPT_STATUS_TONES: Record<ReceiptStatus, BadgeTone> = {
+  CREATED: "warning",
+  PAID: "info",
+  COMPLETED: "success",
+  CANCELLED: "neutral",
+  REFUNDED: "destructive",
+  DELETED: "neutral",
+};
+
+export function isReceiptStatus(value: string): value is ReceiptStatus {
+  return (RECEIPT_STATUSES as readonly string[]).includes(value);
+}
+
 export const PAYMENT_METHOD_LABELS: Record<PaymentMethod, string> = {
   CASH: "Готівка",
   CARD: "Картка",
