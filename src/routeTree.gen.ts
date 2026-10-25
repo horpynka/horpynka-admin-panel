@@ -17,6 +17,7 @@ import { Route as PanelCashShiftsRouteImport } from './routes/panel.cash-shifts'
 import { Route as PanelDashboardRouteImport } from './routes/panel.dashboard'
 import { Route as PanelSettingsRouteImport } from './routes/panel.settings'
 import { Route as PanelTransactionsRouteImport } from './routes/panel.transactions'
+import { Route as PanelCashShiftsShiftIdRouteImport } from './routes/panel.cash-shifts_.$shiftId'
 import { Route as PanelDishesIndexRouteImport } from './routes/panel.dishes.index'
 import { Route as PanelDishesNewRouteImport } from './routes/panel.dishes.new'
 import { Route as PanelIngredientsIndexRouteImport } from './routes/panel.ingredients.index'
@@ -70,6 +71,11 @@ const PanelSettingsRoute = PanelSettingsRouteImport.update({
 const PanelTransactionsRoute = PanelTransactionsRouteImport.update({
   id: '/transactions',
   path: '/transactions',
+  getParentRoute: () => PanelRoute,
+} as any)
+const PanelCashShiftsShiftIdRoute = PanelCashShiftsShiftIdRouteImport.update({
+  id: '/cash-shifts_/$shiftId',
+  path: '/cash-shifts/$shiftId',
   getParentRoute: () => PanelRoute,
 } as any)
 const PanelDishesIndexRoute = PanelDishesIndexRouteImport.update({
@@ -154,6 +160,7 @@ export interface FileRoutesByFullPath {
   '/panel/settings': typeof PanelSettingsRoute
   '/panel/transactions': typeof PanelTransactionsRoute
   '/panel/': typeof PanelIndexRoute
+  '/panel/cash-shifts/$shiftId': typeof PanelCashShiftsShiftIdRoute
   '/panel/dishes/new': typeof PanelDishesNewRoute
   '/panel/ingredients/new': typeof PanelIngredientsNewRoute
   '/panel/inventory/$id': typeof PanelInventoryIdRoute
@@ -177,6 +184,7 @@ export interface FileRoutesByTo {
   '/panel/settings': typeof PanelSettingsRoute
   '/panel/transactions': typeof PanelTransactionsRoute
   '/panel': typeof PanelIndexRoute
+  '/panel/cash-shifts/$shiftId': typeof PanelCashShiftsShiftIdRoute
   '/panel/dishes/new': typeof PanelDishesNewRoute
   '/panel/ingredients/new': typeof PanelIngredientsNewRoute
   '/panel/inventory/$id': typeof PanelInventoryIdRoute
@@ -202,6 +210,7 @@ export interface FileRoutesById {
   '/panel/settings': typeof PanelSettingsRoute
   '/panel/transactions': typeof PanelTransactionsRoute
   '/panel/': typeof PanelIndexRoute
+  '/panel/cash-shifts_/$shiftId': typeof PanelCashShiftsShiftIdRoute
   '/panel/dishes/new': typeof PanelDishesNewRoute
   '/panel/ingredients/new': typeof PanelIngredientsNewRoute
   '/panel/inventory/$id': typeof PanelInventoryIdRoute
@@ -228,6 +237,7 @@ export interface FileRouteTypes {
     | '/panel/settings'
     | '/panel/transactions'
     | '/panel/'
+    | '/panel/cash-shifts/$shiftId'
     | '/panel/dishes/new'
     | '/panel/ingredients/new'
     | '/panel/inventory/$id'
@@ -251,6 +261,7 @@ export interface FileRouteTypes {
     | '/panel/settings'
     | '/panel/transactions'
     | '/panel'
+    | '/panel/cash-shifts/$shiftId'
     | '/panel/dishes/new'
     | '/panel/ingredients/new'
     | '/panel/inventory/$id'
@@ -275,6 +286,7 @@ export interface FileRouteTypes {
     | '/panel/settings'
     | '/panel/transactions'
     | '/panel/'
+    | '/panel/cash-shifts_/$shiftId'
     | '/panel/dishes/new'
     | '/panel/ingredients/new'
     | '/panel/inventory/$id'
@@ -353,6 +365,13 @@ declare module '@tanstack/react-router' {
       path: '/transactions'
       fullPath: '/panel/transactions'
       preLoaderRoute: typeof PanelTransactionsRouteImport
+      parentRoute: typeof PanelRoute
+    }
+    '/panel/cash-shifts_/$shiftId': {
+      id: '/panel/cash-shifts_/$shiftId'
+      path: '/cash-shifts/$shiftId'
+      fullPath: '/panel/cash-shifts/$shiftId'
+      preLoaderRoute: typeof PanelCashShiftsShiftIdRouteImport
       parentRoute: typeof PanelRoute
     }
     '/panel/dishes/': {
@@ -462,6 +481,7 @@ interface PanelRouteChildren {
   PanelSettingsRoute: typeof PanelSettingsRoute
   PanelTransactionsRoute: typeof PanelTransactionsRoute
   PanelIndexRoute: typeof PanelIndexRoute
+  PanelCashShiftsShiftIdRoute: typeof PanelCashShiftsShiftIdRoute
   PanelDishesNewRoute: typeof PanelDishesNewRoute
   PanelIngredientsNewRoute: typeof PanelIngredientsNewRoute
   PanelInventoryIdRoute: typeof PanelInventoryIdRoute
@@ -484,6 +504,7 @@ const PanelRouteChildren: PanelRouteChildren = {
   PanelSettingsRoute: PanelSettingsRoute,
   PanelTransactionsRoute: PanelTransactionsRoute,
   PanelIndexRoute: PanelIndexRoute,
+  PanelCashShiftsShiftIdRoute: PanelCashShiftsShiftIdRoute,
   PanelDishesNewRoute: PanelDishesNewRoute,
   PanelIngredientsNewRoute: PanelIngredientsNewRoute,
   PanelInventoryIdRoute: PanelInventoryIdRoute,
