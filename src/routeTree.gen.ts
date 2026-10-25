@@ -28,6 +28,7 @@ import { Route as PanelOrdersOrderIdRouteImport } from './routes/panel.orders.$o
 import { Route as PanelProductsIndexRouteImport } from './routes/panel.products.index'
 import { Route as PanelProductsNewRouteImport } from './routes/panel.products.new'
 import { Route as PanelDishesDishIdEditRouteImport } from './routes/panel.dishes.$dishId.edit'
+import { Route as PanelIngredientsIngredientIdEditRouteImport } from './routes/panel.ingredients.$ingredientId.edit'
 import { Route as PanelProductsProductIdEditRouteImport } from './routes/panel.products.$productId.edit'
 
 const IndexRoute = IndexRouteImport.update({
@@ -125,6 +126,12 @@ const PanelDishesDishIdEditRoute = PanelDishesDishIdEditRouteImport.update({
   path: '/dishes/$dishId/edit',
   getParentRoute: () => PanelRoute,
 } as any)
+const PanelIngredientsIngredientIdEditRoute =
+  PanelIngredientsIngredientIdEditRouteImport.update({
+    id: '/ingredients/$ingredientId/edit',
+    path: '/ingredients/$ingredientId/edit',
+    getParentRoute: () => PanelRoute,
+  } as any)
 const PanelProductsProductIdEditRoute =
   PanelProductsProductIdEditRouteImport.update({
     id: '/products/$productId/edit',
@@ -152,6 +159,7 @@ export interface FileRoutesByFullPath {
   '/panel/orders/': typeof PanelOrdersIndexRoute
   '/panel/products/': typeof PanelProductsIndexRoute
   '/panel/dishes/$dishId/edit': typeof PanelDishesDishIdEditRoute
+  '/panel/ingredients/$ingredientId/edit': typeof PanelIngredientsIngredientIdEditRoute
   '/panel/products/$productId/edit': typeof PanelProductsProductIdEditRoute
 }
 export interface FileRoutesByTo {
@@ -173,6 +181,7 @@ export interface FileRoutesByTo {
   '/panel/orders': typeof PanelOrdersIndexRoute
   '/panel/products': typeof PanelProductsIndexRoute
   '/panel/dishes/$dishId/edit': typeof PanelDishesDishIdEditRoute
+  '/panel/ingredients/$ingredientId/edit': typeof PanelIngredientsIngredientIdEditRoute
   '/panel/products/$productId/edit': typeof PanelProductsProductIdEditRoute
 }
 export interface FileRoutesById {
@@ -196,6 +205,7 @@ export interface FileRoutesById {
   '/panel/orders/': typeof PanelOrdersIndexRoute
   '/panel/products/': typeof PanelProductsIndexRoute
   '/panel/dishes/$dishId/edit': typeof PanelDishesDishIdEditRoute
+  '/panel/ingredients/$ingredientId/edit': typeof PanelIngredientsIngredientIdEditRoute
   '/panel/products/$productId/edit': typeof PanelProductsProductIdEditRoute
 }
 export interface FileRouteTypes {
@@ -220,6 +230,7 @@ export interface FileRouteTypes {
     | '/panel/orders/'
     | '/panel/products/'
     | '/panel/dishes/$dishId/edit'
+    | '/panel/ingredients/$ingredientId/edit'
     | '/panel/products/$productId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -241,6 +252,7 @@ export interface FileRouteTypes {
     | '/panel/orders'
     | '/panel/products'
     | '/panel/dishes/$dishId/edit'
+    | '/panel/ingredients/$ingredientId/edit'
     | '/panel/products/$productId/edit'
   id:
     | '__root__'
@@ -263,6 +275,7 @@ export interface FileRouteTypes {
     | '/panel/orders/'
     | '/panel/products/'
     | '/panel/dishes/$dishId/edit'
+    | '/panel/ingredients/$ingredientId/edit'
     | '/panel/products/$productId/edit'
   fileRoutesById: FileRoutesById
 }
@@ -407,6 +420,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PanelDishesDishIdEditRouteImport
       parentRoute: typeof PanelRoute
     }
+    '/panel/ingredients/$ingredientId/edit': {
+      id: '/panel/ingredients/$ingredientId/edit'
+      path: '/ingredients/$ingredientId/edit'
+      fullPath: '/panel/ingredients/$ingredientId/edit'
+      preLoaderRoute: typeof PanelIngredientsIngredientIdEditRouteImport
+      parentRoute: typeof PanelRoute
+    }
     '/panel/products/$productId/edit': {
       id: '/panel/products/$productId/edit'
       path: '/products/$productId/edit'
@@ -434,6 +454,7 @@ interface PanelRouteChildren {
   PanelOrdersIndexRoute: typeof PanelOrdersIndexRoute
   PanelProductsIndexRoute: typeof PanelProductsIndexRoute
   PanelDishesDishIdEditRoute: typeof PanelDishesDishIdEditRoute
+  PanelIngredientsIngredientIdEditRoute: typeof PanelIngredientsIngredientIdEditRoute
   PanelProductsProductIdEditRoute: typeof PanelProductsProductIdEditRoute
 }
 
@@ -454,6 +475,7 @@ const PanelRouteChildren: PanelRouteChildren = {
   PanelOrdersIndexRoute: PanelOrdersIndexRoute,
   PanelProductsIndexRoute: PanelProductsIndexRoute,
   PanelDishesDishIdEditRoute: PanelDishesDishIdEditRoute,
+  PanelIngredientsIngredientIdEditRoute: PanelIngredientsIngredientIdEditRoute,
   PanelProductsProductIdEditRoute: PanelProductsProductIdEditRoute,
 }
 
