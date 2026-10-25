@@ -18,7 +18,7 @@ import {
 import { Card } from "@/components/ui/card";
 import { formatDateTime } from "@/lib/format";
 import { INVENTORY_STATUS_LABELS, INVENTORY_STATUS_TONES } from "@/lib/labels";
-import type { Inventory, InventoryStatus } from "@/types/domain";
+import type { InventoryStatus } from "@/types/domain";
 import { useInventoryApi } from "@horpynka/api-sdk";
 
 export const Route = createFileRoute("/panel/inventory/")({
@@ -63,6 +63,7 @@ function InventoryPage() {
 
   const { getInventoriesQuery, mutateStartInventory } = useInventoryApi();
   const { data: inventories, isLoading, isError, refetch } = useQuery(getInventoriesQuery());
+  type InventoryRow = NonNullable<typeof inventories>[number];
 
   if (isLoading) return <LoadingState />;
   if (isError) {
@@ -81,7 +82,7 @@ function InventoryPage() {
     return statusFilter === "ALL" || inventory.status === statusFilter;
   });
 
-  const columns: DataTableColumn<Inventory>[] = [
+  const columns: DataTableColumn<InventoryRow>[] = [
     {
       id: "id",
       header: "№",

@@ -9,6 +9,7 @@ import {
   Receipt,
   Settings,
   Store,
+  Tags,
   Wallet,
 } from "lucide-react";
 
@@ -44,6 +45,7 @@ const NAV_GROUPS = [
       { title: "Страви", url: "/panel/dishes", icon: CookingPot },
       { title: "Інгредієнти", url: "/panel/ingredients", icon: Boxes },
       { title: "Меню", url: "/panel/menu", icon: Store },
+      { title: "Категорії", url: "/panel/categories", icon: Tags },
     ],
   },
   {

@@ -18,6 +18,7 @@ import { Route as PanelDashboardRouteImport } from './routes/panel.dashboard'
 import { Route as PanelSettingsRouteImport } from './routes/panel.settings'
 import { Route as PanelTransactionsRouteImport } from './routes/panel.transactions'
 import { Route as PanelCashShiftsShiftIdRouteImport } from './routes/panel.cash-shifts_.$shiftId'
+import { Route as PanelCategoriesIndexRouteImport } from './routes/panel.categories.index'
 import { Route as PanelDishesIndexRouteImport } from './routes/panel.dishes.index'
 import { Route as PanelDishesNewRouteImport } from './routes/panel.dishes.new'
 import { Route as PanelIngredientsIndexRouteImport } from './routes/panel.ingredients.index'
@@ -76,6 +77,11 @@ const PanelTransactionsRoute = PanelTransactionsRouteImport.update({
 const PanelCashShiftsShiftIdRoute = PanelCashShiftsShiftIdRouteImport.update({
   id: '/cash-shifts_/$shiftId',
   path: '/cash-shifts/$shiftId',
+  getParentRoute: () => PanelRoute,
+} as any)
+const PanelCategoriesIndexRoute = PanelCategoriesIndexRouteImport.update({
+  id: '/categories/',
+  path: '/categories/',
   getParentRoute: () => PanelRoute,
 } as any)
 const PanelDishesIndexRoute = PanelDishesIndexRouteImport.update({
@@ -166,6 +172,7 @@ export interface FileRoutesByFullPath {
   '/panel/inventory/$id': typeof PanelInventoryIdRoute
   '/panel/orders/$orderId': typeof PanelOrdersOrderIdRoute
   '/panel/products/new': typeof PanelProductsNewRoute
+  '/panel/categories/': typeof PanelCategoriesIndexRoute
   '/panel/dishes/': typeof PanelDishesIndexRoute
   '/panel/ingredients/': typeof PanelIngredientsIndexRoute
   '/panel/inventory/': typeof PanelInventoryIndexRoute
@@ -190,6 +197,7 @@ export interface FileRoutesByTo {
   '/panel/inventory/$id': typeof PanelInventoryIdRoute
   '/panel/orders/$orderId': typeof PanelOrdersOrderIdRoute
   '/panel/products/new': typeof PanelProductsNewRoute
+  '/panel/categories': typeof PanelCategoriesIndexRoute
   '/panel/dishes': typeof PanelDishesIndexRoute
   '/panel/ingredients': typeof PanelIngredientsIndexRoute
   '/panel/inventory': typeof PanelInventoryIndexRoute
@@ -216,6 +224,7 @@ export interface FileRoutesById {
   '/panel/inventory/$id': typeof PanelInventoryIdRoute
   '/panel/orders/$orderId': typeof PanelOrdersOrderIdRoute
   '/panel/products/new': typeof PanelProductsNewRoute
+  '/panel/categories/': typeof PanelCategoriesIndexRoute
   '/panel/dishes/': typeof PanelDishesIndexRoute
   '/panel/ingredients/': typeof PanelIngredientsIndexRoute
   '/panel/inventory/': typeof PanelInventoryIndexRoute
@@ -243,6 +252,7 @@ export interface FileRouteTypes {
     | '/panel/inventory/$id'
     | '/panel/orders/$orderId'
     | '/panel/products/new'
+    | '/panel/categories/'
     | '/panel/dishes/'
     | '/panel/ingredients/'
     | '/panel/inventory/'
@@ -267,6 +277,7 @@ export interface FileRouteTypes {
     | '/panel/inventory/$id'
     | '/panel/orders/$orderId'
     | '/panel/products/new'
+    | '/panel/categories'
     | '/panel/dishes'
     | '/panel/ingredients'
     | '/panel/inventory'
@@ -292,6 +303,7 @@ export interface FileRouteTypes {
     | '/panel/inventory/$id'
     | '/panel/orders/$orderId'
     | '/panel/products/new'
+    | '/panel/categories/'
     | '/panel/dishes/'
     | '/panel/ingredients/'
     | '/panel/inventory/'
@@ -372,6 +384,13 @@ declare module '@tanstack/react-router' {
       path: '/cash-shifts/$shiftId'
       fullPath: '/panel/cash-shifts/$shiftId'
       preLoaderRoute: typeof PanelCashShiftsShiftIdRouteImport
+      parentRoute: typeof PanelRoute
+    }
+    '/panel/categories/': {
+      id: '/panel/categories/'
+      path: '/categories'
+      fullPath: '/panel/categories/'
+      preLoaderRoute: typeof PanelCategoriesIndexRouteImport
       parentRoute: typeof PanelRoute
     }
     '/panel/dishes/': {
@@ -487,6 +506,7 @@ interface PanelRouteChildren {
   PanelInventoryIdRoute: typeof PanelInventoryIdRoute
   PanelOrdersOrderIdRoute: typeof PanelOrdersOrderIdRoute
   PanelProductsNewRoute: typeof PanelProductsNewRoute
+  PanelCategoriesIndexRoute: typeof PanelCategoriesIndexRoute
   PanelDishesIndexRoute: typeof PanelDishesIndexRoute
   PanelIngredientsIndexRoute: typeof PanelIngredientsIndexRoute
   PanelInventoryIndexRoute: typeof PanelInventoryIndexRoute
@@ -510,6 +530,7 @@ const PanelRouteChildren: PanelRouteChildren = {
   PanelInventoryIdRoute: PanelInventoryIdRoute,
   PanelOrdersOrderIdRoute: PanelOrdersOrderIdRoute,
   PanelProductsNewRoute: PanelProductsNewRoute,
+  PanelCategoriesIndexRoute: PanelCategoriesIndexRoute,
   PanelDishesIndexRoute: PanelDishesIndexRoute,
   PanelIngredientsIndexRoute: PanelIngredientsIndexRoute,
   PanelInventoryIndexRoute: PanelInventoryIndexRoute,

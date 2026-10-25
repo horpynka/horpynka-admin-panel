@@ -8,6 +8,7 @@ import { EmptyState, ErrorState, LoadingState } from "@/components/common/states
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { categoryName } from "@/lib/categories";
 import { Switch } from "@/components/ui/switch";
 import {
   Select,

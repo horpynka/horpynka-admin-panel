@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { listCategories } from "@/lib/categories";
 import { formatMoney, measurementUnitLabel, toHryvnias, toKopecks } from "@/lib/format";
 import type { MeasurementUnit } from "@/types/domain";
 import { useCategoriesApi, useProductsApi } from "@horpynka/api-sdk";
@@ -87,19 +88,6 @@ function isMeasurementUnit(value: string): value is MeasurementUnit {
   return MEASUREMENT_UNITS.some((unit) => unit === value);
 }
 
-function collectCategories(categories: {
-  dishesCategories: ReadonlyArray<{ id: number; name: string }>;
-  productsCategories: ReadonlyArray<{ id: number; name: string }>;
-}) {
-  const byId = new Map<number, { id: number; name: string }>();
-  for (const category of [...categories.dishesCategories, ...categories.productsCategories]) {
-    if (!byId.has(category.id)) {
-      byId.set(category.id, { id: category.id, name: category.name });
-    }
-  }
-  return [...byId.values()];
-}
-
 function validateForm(form: ProductFormState): FieldErrors {
   const errors: FieldErrors = {};
   if (form.name.trim() === "") errors.name = "Вкажіть назву.";
@@ -146,7 +134,7 @@ function NewProductPage() {
     );
   }
 
-  const categoryOptions = collectCategories(categories);
+  const categoryOptions = listCategories(categories);
 
   const clearError = (field: FieldName) => {
     setErrors((current) => {

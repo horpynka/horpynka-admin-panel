@@ -9,6 +9,7 @@ import { AlertCircle, Loader2, Plus, Trash2 } from "lucide-react";
 import { useCategoriesApi, useDishesApi, useIngredientsApi } from "@horpynka/api-sdk";
 
 import { ErrorState, LoadingState } from "@/components/common/states";
+import { listCategories } from "@/lib/categories";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -188,7 +189,7 @@ function NewDishPage() {
   });
   const ingredientRows = useWatch({ control: form.control, name: "ingredients" });
 
-  const categories = categoriesQuery.data?.dishesCategories ?? [];
+  const categories = categoriesQuery.data ? listCategories(categoriesQuery.data) : [];
   const ingredients = ingredientsQuery.data ?? [];
   const takenIngredientIds = new Set(
     ingredientRows.flatMap((row) => (row.ingredientId ? [row.ingredientId] : [])),
@@ -311,7 +312,7 @@ function NewDishPage() {
                       </SelectContent>
                     </Select>
                     {categories.length === 0 ? (
-                      <FormDescription>Немає категорій страв.</FormDescription>
+                      <FormDescription>Немає категорій.</FormDescription>
                     ) : null}
                     <FormMessage />
                   </FormItem>
