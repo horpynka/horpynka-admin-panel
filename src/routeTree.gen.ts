@@ -15,13 +15,14 @@ import { Route as PanelRouteImport } from './routes/panel'
 import { Route as PanelIndexRouteImport } from './routes/panel.index'
 import { Route as PanelCashShiftsRouteImport } from './routes/panel.cash-shifts'
 import { Route as PanelDashboardRouteImport } from './routes/panel.dashboard'
-import { Route as PanelInventoryRouteImport } from './routes/panel.inventory'
 import { Route as PanelSettingsRouteImport } from './routes/panel.settings'
 import { Route as PanelTransactionsRouteImport } from './routes/panel.transactions'
 import { Route as PanelDishesIndexRouteImport } from './routes/panel.dishes.index'
 import { Route as PanelDishesNewRouteImport } from './routes/panel.dishes.new'
 import { Route as PanelIngredientsIndexRouteImport } from './routes/panel.ingredients.index'
 import { Route as PanelIngredientsNewRouteImport } from './routes/panel.ingredients.new'
+import { Route as PanelInventoryIndexRouteImport } from './routes/panel.inventory.index'
+import { Route as PanelInventoryIdRouteImport } from './routes/panel.inventory.$id'
 import { Route as PanelMenuIndexRouteImport } from './routes/panel.menu.index'
 import { Route as PanelOrdersIndexRouteImport } from './routes/panel.orders.index'
 import { Route as PanelOrdersOrderIdRouteImport } from './routes/panel.orders.$orderId'
@@ -59,11 +60,6 @@ const PanelDashboardRoute = PanelDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => PanelRoute,
 } as any)
-const PanelInventoryRoute = PanelInventoryRouteImport.update({
-  id: '/inventory',
-  path: '/inventory',
-  getParentRoute: () => PanelRoute,
-} as any)
 const PanelSettingsRoute = PanelSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -92,6 +88,16 @@ const PanelIngredientsIndexRoute = PanelIngredientsIndexRouteImport.update({
 const PanelIngredientsNewRoute = PanelIngredientsNewRouteImport.update({
   id: '/ingredients/new',
   path: '/ingredients/new',
+  getParentRoute: () => PanelRoute,
+} as any)
+const PanelInventoryIndexRoute = PanelInventoryIndexRouteImport.update({
+  id: '/inventory/',
+  path: '/inventory/',
+  getParentRoute: () => PanelRoute,
+} as any)
+const PanelInventoryIdRoute = PanelInventoryIdRouteImport.update({
+  id: '/inventory/$id',
+  path: '/inventory/$id',
   getParentRoute: () => PanelRoute,
 } as any)
 const PanelMenuIndexRoute = PanelMenuIndexRouteImport.update({
@@ -132,16 +138,17 @@ export interface FileRoutesByFullPath {
   '/panel': typeof PanelRouteWithChildren
   '/panel/cash-shifts': typeof PanelCashShiftsRoute
   '/panel/dashboard': typeof PanelDashboardRoute
-  '/panel/inventory': typeof PanelInventoryRoute
   '/panel/settings': typeof PanelSettingsRoute
   '/panel/transactions': typeof PanelTransactionsRoute
   '/panel/': typeof PanelIndexRoute
   '/panel/dishes/new': typeof PanelDishesNewRoute
   '/panel/ingredients/new': typeof PanelIngredientsNewRoute
+  '/panel/inventory/$id': typeof PanelInventoryIdRoute
   '/panel/orders/$orderId': typeof PanelOrdersOrderIdRoute
   '/panel/products/new': typeof PanelProductsNewRoute
   '/panel/dishes/': typeof PanelDishesIndexRoute
   '/panel/ingredients/': typeof PanelIngredientsIndexRoute
+  '/panel/inventory/': typeof PanelInventoryIndexRoute
   '/panel/menu/': typeof PanelMenuIndexRoute
   '/panel/orders/': typeof PanelOrdersIndexRoute
   '/panel/products/': typeof PanelProductsIndexRoute
@@ -152,16 +159,17 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/panel/cash-shifts': typeof PanelCashShiftsRoute
   '/panel/dashboard': typeof PanelDashboardRoute
-  '/panel/inventory': typeof PanelInventoryRoute
   '/panel/settings': typeof PanelSettingsRoute
   '/panel/transactions': typeof PanelTransactionsRoute
   '/panel': typeof PanelIndexRoute
   '/panel/dishes/new': typeof PanelDishesNewRoute
   '/panel/ingredients/new': typeof PanelIngredientsNewRoute
+  '/panel/inventory/$id': typeof PanelInventoryIdRoute
   '/panel/orders/$orderId': typeof PanelOrdersOrderIdRoute
   '/panel/products/new': typeof PanelProductsNewRoute
   '/panel/dishes': typeof PanelDishesIndexRoute
   '/panel/ingredients': typeof PanelIngredientsIndexRoute
+  '/panel/inventory': typeof PanelInventoryIndexRoute
   '/panel/menu': typeof PanelMenuIndexRoute
   '/panel/orders': typeof PanelOrdersIndexRoute
   '/panel/products': typeof PanelProductsIndexRoute
@@ -174,16 +182,17 @@ export interface FileRoutesById {
   '/panel': typeof PanelRouteWithChildren
   '/panel/cash-shifts': typeof PanelCashShiftsRoute
   '/panel/dashboard': typeof PanelDashboardRoute
-  '/panel/inventory': typeof PanelInventoryRoute
   '/panel/settings': typeof PanelSettingsRoute
   '/panel/transactions': typeof PanelTransactionsRoute
   '/panel/': typeof PanelIndexRoute
   '/panel/dishes/new': typeof PanelDishesNewRoute
   '/panel/ingredients/new': typeof PanelIngredientsNewRoute
+  '/panel/inventory/$id': typeof PanelInventoryIdRoute
   '/panel/orders/$orderId': typeof PanelOrdersOrderIdRoute
   '/panel/products/new': typeof PanelProductsNewRoute
   '/panel/dishes/': typeof PanelDishesIndexRoute
   '/panel/ingredients/': typeof PanelIngredientsIndexRoute
+  '/panel/inventory/': typeof PanelInventoryIndexRoute
   '/panel/menu/': typeof PanelMenuIndexRoute
   '/panel/orders/': typeof PanelOrdersIndexRoute
   '/panel/products/': typeof PanelProductsIndexRoute
@@ -197,16 +206,17 @@ export interface FileRouteTypes {
     | '/panel'
     | '/panel/cash-shifts'
     | '/panel/dashboard'
-    | '/panel/inventory'
     | '/panel/settings'
     | '/panel/transactions'
     | '/panel/'
     | '/panel/dishes/new'
     | '/panel/ingredients/new'
+    | '/panel/inventory/$id'
     | '/panel/orders/$orderId'
     | '/panel/products/new'
     | '/panel/dishes/'
     | '/panel/ingredients/'
+    | '/panel/inventory/'
     | '/panel/menu/'
     | '/panel/orders/'
     | '/panel/products/'
@@ -217,16 +227,17 @@ export interface FileRouteTypes {
     | '/login'
     | '/panel/cash-shifts'
     | '/panel/dashboard'
-    | '/panel/inventory'
     | '/panel/settings'
     | '/panel/transactions'
     | '/panel'
     | '/panel/dishes/new'
     | '/panel/ingredients/new'
+    | '/panel/inventory/$id'
     | '/panel/orders/$orderId'
     | '/panel/products/new'
     | '/panel/dishes'
     | '/panel/ingredients'
+    | '/panel/inventory'
     | '/panel/menu'
     | '/panel/orders'
     | '/panel/products'
@@ -238,16 +249,17 @@ export interface FileRouteTypes {
     | '/panel'
     | '/panel/cash-shifts'
     | '/panel/dashboard'
-    | '/panel/inventory'
     | '/panel/settings'
     | '/panel/transactions'
     | '/panel/'
     | '/panel/dishes/new'
     | '/panel/ingredients/new'
+    | '/panel/inventory/$id'
     | '/panel/orders/$orderId'
     | '/panel/products/new'
     | '/panel/dishes/'
     | '/panel/ingredients/'
+    | '/panel/inventory/'
     | '/panel/menu/'
     | '/panel/orders/'
     | '/panel/products/'
@@ -304,13 +316,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PanelDashboardRouteImport
       parentRoute: typeof PanelRoute
     }
-    '/panel/inventory': {
-      id: '/panel/inventory'
-      path: '/inventory'
-      fullPath: '/panel/inventory'
-      preLoaderRoute: typeof PanelInventoryRouteImport
-      parentRoute: typeof PanelRoute
-    }
     '/panel/settings': {
       id: '/panel/settings'
       path: '/settings'
@@ -351,6 +356,20 @@ declare module '@tanstack/react-router' {
       path: '/ingredients/new'
       fullPath: '/panel/ingredients/new'
       preLoaderRoute: typeof PanelIngredientsNewRouteImport
+      parentRoute: typeof PanelRoute
+    }
+    '/panel/inventory/': {
+      id: '/panel/inventory/'
+      path: '/inventory'
+      fullPath: '/panel/inventory/'
+      preLoaderRoute: typeof PanelInventoryIndexRouteImport
+      parentRoute: typeof PanelRoute
+    }
+    '/panel/inventory/$id': {
+      id: '/panel/inventory/$id'
+      path: '/inventory/$id'
+      fullPath: '/panel/inventory/$id'
+      preLoaderRoute: typeof PanelInventoryIdRouteImport
       parentRoute: typeof PanelRoute
     }
     '/panel/menu/': {
@@ -401,16 +420,17 @@ declare module '@tanstack/react-router' {
 interface PanelRouteChildren {
   PanelCashShiftsRoute: typeof PanelCashShiftsRoute
   PanelDashboardRoute: typeof PanelDashboardRoute
-  PanelInventoryRoute: typeof PanelInventoryRoute
   PanelSettingsRoute: typeof PanelSettingsRoute
   PanelTransactionsRoute: typeof PanelTransactionsRoute
   PanelIndexRoute: typeof PanelIndexRoute
   PanelDishesNewRoute: typeof PanelDishesNewRoute
   PanelIngredientsNewRoute: typeof PanelIngredientsNewRoute
+  PanelInventoryIdRoute: typeof PanelInventoryIdRoute
   PanelOrdersOrderIdRoute: typeof PanelOrdersOrderIdRoute
   PanelProductsNewRoute: typeof PanelProductsNewRoute
   PanelDishesIndexRoute: typeof PanelDishesIndexRoute
   PanelIngredientsIndexRoute: typeof PanelIngredientsIndexRoute
+  PanelInventoryIndexRoute: typeof PanelInventoryIndexRoute
   PanelMenuIndexRoute: typeof PanelMenuIndexRoute
   PanelOrdersIndexRoute: typeof PanelOrdersIndexRoute
   PanelProductsIndexRoute: typeof PanelProductsIndexRoute
@@ -420,16 +440,17 @@ interface PanelRouteChildren {
 const PanelRouteChildren: PanelRouteChildren = {
   PanelCashShiftsRoute: PanelCashShiftsRoute,
   PanelDashboardRoute: PanelDashboardRoute,
-  PanelInventoryRoute: PanelInventoryRoute,
   PanelSettingsRoute: PanelSettingsRoute,
   PanelTransactionsRoute: PanelTransactionsRoute,
   PanelIndexRoute: PanelIndexRoute,
   PanelDishesNewRoute: PanelDishesNewRoute,
   PanelIngredientsNewRoute: PanelIngredientsNewRoute,
+  PanelInventoryIdRoute: PanelInventoryIdRoute,
   PanelOrdersOrderIdRoute: PanelOrdersOrderIdRoute,
   PanelProductsNewRoute: PanelProductsNewRoute,
   PanelDishesIndexRoute: PanelDishesIndexRoute,
   PanelIngredientsIndexRoute: PanelIngredientsIndexRoute,
+  PanelInventoryIndexRoute: PanelInventoryIndexRoute,
   PanelMenuIndexRoute: PanelMenuIndexRoute,
   PanelOrdersIndexRoute: PanelOrdersIndexRoute,
   PanelProductsIndexRoute: PanelProductsIndexRoute,

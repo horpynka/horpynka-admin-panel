@@ -132,7 +132,8 @@ export interface InventoryItem {
   name: string;
   measurementUnit: MeasurementUnit;
   expectedQuantity: number;
-  actualQuantity: number;
+  /** Порожнє, доки фактичну кількість не збережено. */
+  actualQuantity: number | null;
 }
 
 export interface Inventory {
