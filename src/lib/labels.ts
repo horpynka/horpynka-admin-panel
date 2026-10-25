@@ -122,6 +122,8 @@ export const SELLING_LABELS = {
 } as const;
 
 export const ROLE_LABELS: Record<string, string> = {
+  HORPYNKA_PANEL_ADMIN: "Адміністратор панелі",
+  HORPYNKA_CASHIER_USER: "Касир",
   ROLE_ADMIN: "Адміністратор",
   ROLE_MANAGER: "Менеджер",
   ROLE_CASHIER: "Касир",
