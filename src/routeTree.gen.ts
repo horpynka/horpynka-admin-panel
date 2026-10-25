@@ -28,6 +28,8 @@ import { Route as PanelOrdersIndexRouteImport } from './routes/panel.orders.inde
 import { Route as PanelOrdersOrderIdRouteImport } from './routes/panel.orders.$orderId'
 import { Route as PanelProductsIndexRouteImport } from './routes/panel.products.index'
 import { Route as PanelProductsNewRouteImport } from './routes/panel.products.new'
+import { Route as PanelDishesDishIdEditRouteImport } from './routes/panel.dishes.$dishId.edit'
+import { Route as PanelIngredientsIngredientIdEditRouteImport } from './routes/panel.ingredients.$ingredientId.edit'
 import { Route as PanelProductsProductIdEditRouteImport } from './routes/panel.products.$productId.edit'
 
 const IndexRoute = IndexRouteImport.update({
@@ -125,6 +127,17 @@ const PanelProductsNewRoute = PanelProductsNewRouteImport.update({
   path: '/products/new',
   getParentRoute: () => PanelRoute,
 } as any)
+const PanelDishesDishIdEditRoute = PanelDishesDishIdEditRouteImport.update({
+  id: '/dishes/$dishId/edit',
+  path: '/dishes/$dishId/edit',
+  getParentRoute: () => PanelRoute,
+} as any)
+const PanelIngredientsIngredientIdEditRoute =
+  PanelIngredientsIngredientIdEditRouteImport.update({
+    id: '/ingredients/$ingredientId/edit',
+    path: '/ingredients/$ingredientId/edit',
+    getParentRoute: () => PanelRoute,
+  } as any)
 const PanelProductsProductIdEditRoute =
   PanelProductsProductIdEditRouteImport.update({
     id: '/products/$productId/edit',
@@ -152,6 +165,8 @@ export interface FileRoutesByFullPath {
   '/panel/menu/': typeof PanelMenuIndexRoute
   '/panel/orders/': typeof PanelOrdersIndexRoute
   '/panel/products/': typeof PanelProductsIndexRoute
+  '/panel/dishes/$dishId/edit': typeof PanelDishesDishIdEditRoute
+  '/panel/ingredients/$ingredientId/edit': typeof PanelIngredientsIngredientIdEditRoute
   '/panel/products/$productId/edit': typeof PanelProductsProductIdEditRoute
 }
 export interface FileRoutesByTo {
@@ -173,6 +188,8 @@ export interface FileRoutesByTo {
   '/panel/menu': typeof PanelMenuIndexRoute
   '/panel/orders': typeof PanelOrdersIndexRoute
   '/panel/products': typeof PanelProductsIndexRoute
+  '/panel/dishes/$dishId/edit': typeof PanelDishesDishIdEditRoute
+  '/panel/ingredients/$ingredientId/edit': typeof PanelIngredientsIngredientIdEditRoute
   '/panel/products/$productId/edit': typeof PanelProductsProductIdEditRoute
 }
 export interface FileRoutesById {
@@ -196,6 +213,8 @@ export interface FileRoutesById {
   '/panel/menu/': typeof PanelMenuIndexRoute
   '/panel/orders/': typeof PanelOrdersIndexRoute
   '/panel/products/': typeof PanelProductsIndexRoute
+  '/panel/dishes/$dishId/edit': typeof PanelDishesDishIdEditRoute
+  '/panel/ingredients/$ingredientId/edit': typeof PanelIngredientsIngredientIdEditRoute
   '/panel/products/$productId/edit': typeof PanelProductsProductIdEditRoute
 }
 export interface FileRouteTypes {
@@ -220,6 +239,8 @@ export interface FileRouteTypes {
     | '/panel/menu/'
     | '/panel/orders/'
     | '/panel/products/'
+    | '/panel/dishes/$dishId/edit'
+    | '/panel/ingredients/$ingredientId/edit'
     | '/panel/products/$productId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -241,6 +262,8 @@ export interface FileRouteTypes {
     | '/panel/menu'
     | '/panel/orders'
     | '/panel/products'
+    | '/panel/dishes/$dishId/edit'
+    | '/panel/ingredients/$ingredientId/edit'
     | '/panel/products/$productId/edit'
   id:
     | '__root__'
@@ -263,6 +286,8 @@ export interface FileRouteTypes {
     | '/panel/menu/'
     | '/panel/orders/'
     | '/panel/products/'
+    | '/panel/dishes/$dishId/edit'
+    | '/panel/ingredients/$ingredientId/edit'
     | '/panel/products/$productId/edit'
   fileRoutesById: FileRoutesById
 }
@@ -407,6 +432,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PanelProductsNewRouteImport
       parentRoute: typeof PanelRoute
     }
+    '/panel/dishes/$dishId/edit': {
+      id: '/panel/dishes/$dishId/edit'
+      path: '/dishes/$dishId/edit'
+      fullPath: '/panel/dishes/$dishId/edit'
+      preLoaderRoute: typeof PanelDishesDishIdEditRouteImport
+      parentRoute: typeof PanelRoute
+    }
+    '/panel/ingredients/$ingredientId/edit': {
+      id: '/panel/ingredients/$ingredientId/edit'
+      path: '/ingredients/$ingredientId/edit'
+      fullPath: '/panel/ingredients/$ingredientId/edit'
+      preLoaderRoute: typeof PanelIngredientsIngredientIdEditRouteImport
+      parentRoute: typeof PanelRoute
+    }
     '/panel/products/$productId/edit': {
       id: '/panel/products/$productId/edit'
       path: '/products/$productId/edit'
@@ -434,6 +473,8 @@ interface PanelRouteChildren {
   PanelMenuIndexRoute: typeof PanelMenuIndexRoute
   PanelOrdersIndexRoute: typeof PanelOrdersIndexRoute
   PanelProductsIndexRoute: typeof PanelProductsIndexRoute
+  PanelDishesDishIdEditRoute: typeof PanelDishesDishIdEditRoute
+  PanelIngredientsIngredientIdEditRoute: typeof PanelIngredientsIngredientIdEditRoute
   PanelProductsProductIdEditRoute: typeof PanelProductsProductIdEditRoute
 }
 
@@ -454,6 +495,8 @@ const PanelRouteChildren: PanelRouteChildren = {
   PanelMenuIndexRoute: PanelMenuIndexRoute,
   PanelOrdersIndexRoute: PanelOrdersIndexRoute,
   PanelProductsIndexRoute: PanelProductsIndexRoute,
+  PanelDishesDishIdEditRoute: PanelDishesDishIdEditRoute,
+  PanelIngredientsIngredientIdEditRoute: PanelIngredientsIngredientIdEditRoute,
   PanelProductsProductIdEditRoute: PanelProductsProductIdEditRoute,
 }
 
