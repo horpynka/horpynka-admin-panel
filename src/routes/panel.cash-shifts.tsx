@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Clock } from "lucide-react";
-
 import { DataTable, type DataTableColumn } from "@/components/common/data-table";
 import { StatusBadge } from "@/components/common/status-badge";
 import { EmptyState, ErrorState, LoadingState } from "@/components/common/states";
@@ -15,7 +13,7 @@ import {
 } from "@/components/ui/select";
 import { Card } from "@/components/ui/card";
 import { formatMoney, formatDateTime } from "@/lib/format";
-import { CASH_SHIFT_STATUS_LABELS, CASH_SHIFT_STATUS_TONES, type BadgeTone } from "@/lib/labels";
+import { CASH_SHIFT_STATUS_LABELS, CASH_SHIFT_STATUS_TONES } from "@/lib/labels";
 import type { CashShift, CashShiftStatus } from "@/types/domain";
 import { useCashShiftsApi } from "@horpynka/api-sdk";
 
@@ -58,9 +56,10 @@ function CashShiftsPage() {
       id: "status",
       header: "Статус",
       cell: (row) => (
-        <StatusBadge tone={CASH_SHIFT_STATUS_TONES[row.status] as BadgeTone}>
-          {CASH_SHIFT_STATUS_LABELS[row.status]}
-        </StatusBadge>
+        <StatusBadge
+          label={CASH_SHIFT_STATUS_LABELS[row.status]}
+          tone={CASH_SHIFT_STATUS_TONES[row.status]}
+        />
       ),
       sortValue: (row) => row.status,
     },
@@ -144,7 +143,6 @@ function CashShiftsPage() {
         rowKey={(row) => row.id}
         emptyState={
           <EmptyState
-            icon={Clock}
             title="Касових змін поки немає"
             description="Тут з'являться всі касові зміни."
           />

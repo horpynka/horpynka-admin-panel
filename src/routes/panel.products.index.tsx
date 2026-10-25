@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Package, Plus, Search } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 
 import { DataTable, type DataTableColumn } from "@/components/common/data-table";
 import { EmptyState, ErrorState, LoadingState } from "@/components/common/states";
@@ -200,7 +200,6 @@ function ProductsPage() {
         emptyState={
           products.length === 0 ? (
             <EmptyState
-              icon={Package}
               title="Товарів поки немає"
               description="Додайте перший товар до каталогу."
               action={

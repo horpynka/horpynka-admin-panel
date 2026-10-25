@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { FlaskConical, Plus, Search } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 
 import { DataTable, type DataTableColumn } from "@/components/common/data-table";
 import { EmptyState, ErrorState, LoadingState } from "@/components/common/states";
@@ -10,8 +10,12 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { measurementUnitLabel } from "@/lib/format";
-import type { Ingredient } from "@/types/domain";
+import type { MeasurementUnit } from "@/types/domain";
 import { useIngredientsApi } from "@horpynka/api-sdk";
+
+function isMeasurementUnit(value: string): value is MeasurementUnit {
+  return value === "g" || value === "ml" || value === "pcs";
+}
 
 export const Route = createFileRoute("/panel/ingredients/")({
   ssr: false,
@@ -44,7 +48,7 @@ function IngredientsPage() {
     return matchesSearch;
   });
 
-  const columns: DataTableColumn<Ingredient>[] = [
+  const columns: DataTableColumn<(typeof ingredients)[number]>[] = [
     {
       id: "name",
       header: "Назва",
@@ -56,7 +60,9 @@ function IngredientsPage() {
       header: "Одиниця вимірювання",
       cell: (row) => (
         <Badge variant="outline" className="font-normal">
-          {measurementUnitLabel(row.measurementUnit)}
+          {isMeasurementUnit(row.measurementUnit)
+            ? measurementUnitLabel(row.measurementUnit)
+            : row.measurementUnit}
         </Badge>
       ),
       sortValue: (row) => row.measurementUnit,
@@ -100,7 +106,6 @@ function IngredientsPage() {
         }
         emptyState={
           <EmptyState
-            icon={FlaskConical}
             title="Інгредієнтів поки немає"
             description="Додайте перший інгредієнт для страв."
             action={

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { UtensilsCrossed, Plus, Search } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 
 import { DataTable, type DataTableColumn } from "@/components/common/data-table";
 import { EmptyState, ErrorState, LoadingState } from "@/components/common/states";
@@ -141,7 +141,6 @@ function DishesPage() {
         }
         emptyState={
           <EmptyState
-            icon={UtensilsCrossed}
             title="Страв поки немає"
             description="Додайте першу страву до каталогу."
             action={

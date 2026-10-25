@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ClipboardList } from "lucide-react";
-
 import { DataTable, type DataTableColumn } from "@/components/common/data-table";
 import { StatusBadge } from "@/components/common/status-badge";
 import { EmptyState, ErrorState, LoadingState } from "@/components/common/states";
@@ -15,8 +13,8 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDateTime, formatQuantity } from "@/lib/format";
-import { INVENTORY_STATUS_LABELS, INVENTORY_STATUS_TONES, type BadgeTone } from "@/lib/labels";
-import type { Inventory, InventoryStatus } from "@/types/domain";
+import { INVENTORY_STATUS_LABELS, INVENTORY_STATUS_TONES } from "@/lib/labels";
+import type { InventoryStatus } from "@/types/domain";
 import { useInventoryApi } from "@horpynka/api-sdk";
 
 export const Route = createFileRoute("/panel/inventory")({
@@ -33,11 +31,12 @@ export const Route = createFileRoute("/panel/inventory")({
 });
 
 function InventoryPage() {
-  const [statusFilter, setStatusFilter] = useState<InventoryStatus | "ALL">("ALL");
-  const [selectedInventory, setSelectedInventory] = useState<Inventory | null>(null);
-
   const getInventories = useInventoryApi().getInventoriesQuery;
   const { data: inventories, isLoading, isError } = useQuery(getInventories());
+  type InventoryRow = NonNullable<typeof inventories>[number];
+
+  const [statusFilter, setStatusFilter] = useState<InventoryStatus | "ALL">("ALL");
+  const [selectedInventory, setSelectedInventory] = useState<InventoryRow | null>(null);
 
   if (isLoading) return <LoadingState />;
   if (isError) return <ErrorState message="Не вдалося завантажити інвентаризації." />;
@@ -48,7 +47,7 @@ function InventoryPage() {
     return matchesStatus;
   });
 
-  const columns: DataTableColumn<Inventory>[] = [
+  const columns: DataTableColumn<InventoryRow>[] = [
     {
       id: "id",
       header: "№",
@@ -59,9 +58,10 @@ function InventoryPage() {
       id: "status",
       header: "Статус",
       cell: (row) => (
-        <StatusBadge tone={INVENTORY_STATUS_TONES[row.status] as BadgeTone}>
-          {INVENTORY_STATUS_LABELS[row.status]}
-        </StatusBadge>
+        <StatusBadge
+          label={INVENTORY_STATUS_LABELS[row.status]}
+          tone={INVENTORY_STATUS_TONES[row.status]}
+        />
       ),
       sortValue: (row) => row.status,
     },
@@ -130,7 +130,6 @@ function InventoryPage() {
         onRowClick={(row) => setSelectedInventory(row)}
         emptyState={
           <EmptyState
-            icon={ClipboardList}
             title="Інвентаризацій поки немає"
             description="Тут з'являться результати інвентаризацій."
           />
@@ -142,9 +141,10 @@ function InventoryPage() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="text-base">Інвентаризація #{selectedInventory.id}</CardTitle>
-              <StatusBadge tone={INVENTORY_STATUS_TONES[selectedInventory.status] as BadgeTone}>
-                {INVENTORY_STATUS_LABELS[selectedInventory.status]}
-              </StatusBadge>
+              <StatusBadge
+                label={INVENTORY_STATUS_LABELS[selectedInventory.status]}
+                tone={INVENTORY_STATUS_TONES[selectedInventory.status]}
+              />
             </div>
             <CardDescription>
               {formatDateTime(selectedInventory.createdAt)} · {selectedInventory.responsible}
@@ -153,8 +153,11 @@ function InventoryPage() {
           <CardContent>
             <div className="space-y-2">
               {selectedInventory.items.map((item) => {
-                const difference = item.actualQuantity - item.expectedQuantity;
-                const hasDifference = difference !== 0;
+                const difference =
+                  item.actualQuantity === null
+                    ? null
+                    : item.actualQuantity - item.expectedQuantity;
+                const hasDifference = difference !== null && difference !== 0;
 
                 return (
                   <div
@@ -167,17 +170,20 @@ function InventoryPage() {
                       <div className="font-medium">{item.name}</div>
                       <div className="text-sm text-muted-foreground">
                         Очікувано: {formatQuantity(item.expectedQuantity, item.measurementUnit)} ·
-                        Фактично: {formatQuantity(item.actualQuantity, item.measurementUnit)}
+                        Фактично:{" "}
+                        {item.actualQuantity === null
+                          ? "—"
+                          : formatQuantity(item.actualQuantity, item.measurementUnit)}
                       </div>
                     </div>
-                    {hasDifference && (
+                    {hasDifference && difference !== null ? (
                       <div
                         className={`text-sm font-semibold ${difference > 0 ? "text-success" : "text-destructive"}`}
                       >
                         {difference > 0 ? "+" : ""}
                         {formatQuantity(Math.abs(difference), item.measurementUnit)}
                       </div>
-                    )}
+                    ) : null}
                   </div>
                 );
               })}
