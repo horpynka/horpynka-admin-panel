@@ -23,6 +23,7 @@ const SEGMENT_LABELS: Record<string, string> = {
   dishes: "Страви",
   ingredients: "Інгредієнти",
   menu: "Меню",
+  categories: "Категорії",
   transactions: "Транзакції",
   "cash-shifts": "Касові зміни",
   inventory: "Інвентаризація",

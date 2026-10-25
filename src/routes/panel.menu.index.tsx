@@ -8,6 +8,7 @@ import { EmptyState, ErrorState, LoadingState } from "@/components/common/states
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { categoryName } from "@/lib/categories";
 import { formatMoney } from "@/lib/format";
 import { MENU_ITEM_KIND_LABELS } from "@/lib/labels";
 import type { MenuItem } from "@/types/domain";
@@ -41,14 +42,7 @@ function MenuPage() {
   if (isError) return <ErrorState message="Не вдалося завантажити меню." />;
   if (!menuItems) return null;
 
-  const getCategoryName = (categoryId: number | null) => {
-    if (!categoryId || !categories) return "—";
-    return (
-      [...categories.dishesCategories, ...categories.productsCategories].find(
-        (c) => c.id === categoryId,
-      )?.name ?? "—"
-    );
-  };
+  const getCategoryName = (categoryId: number | null) => categoryName(categories, categoryId);
 
   const filteredItems = menuItems.filter((item) => {
     const matchesSearch = search

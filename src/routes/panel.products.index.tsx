@@ -16,24 +16,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { categoryName, listCategories } from "@/lib/categories";
 import { formatMoney, formatDateTime, measurementUnitLabel } from "@/lib/format";
 import type { MeasurementUnit } from "@/types/domain";
 import { useCategoriesApi, useProductsApi } from "@horpynka/api-sdk";
 
 type SellingFilter = "all" | "selling" | "not-selling";
-
-function collectCategories(categories: {
-  dishesCategories: ReadonlyArray<{ id: number; name: string }>;
-  productsCategories: ReadonlyArray<{ id: number; name: string }>;
-}) {
-  const byId = new Map<number, { id: number; name: string }>();
-  for (const category of [...categories.dishesCategories, ...categories.productsCategories]) {
-    if (!byId.has(category.id)) {
-      byId.set(category.id, { id: category.id, name: category.name });
-    }
-  }
-  return [...byId.values()];
-}
 
 function isMeasurementUnit(value: string): value is MeasurementUnit {
   return value === "g" || value === "ml" || value === "pcs";
@@ -68,16 +56,9 @@ function ProductsPage() {
   if (isError) return <ErrorState message="Не вдалося завантажити товари." />;
   if (!products) return null;
 
-  const getCategoryName = (categoryId: number | null) => {
-    if (!categoryId || !categories) return "—";
-    return (
-      [...categories.dishesCategories, ...categories.productsCategories].find(
-        (c) => c.id === categoryId,
-      )?.name ?? "—"
-    );
-  };
+  const getCategoryName = (categoryId: number | null) => categoryName(categories, categoryId);
 
-  const categoryOptions = categories ? collectCategories(categories) : [];
+  const categoryOptions = categories ? listCategories(categories) : [];
 
   const filteredProducts = products.filter((product) => {
     const query = search.trim().toLowerCase();

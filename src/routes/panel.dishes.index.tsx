@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { categoryName } from "@/lib/categories";
 import { formatMoney, formatDateTime } from "@/lib/format";
 import type { Dish } from "@/types/domain";
 import { useCategoriesApi, useDishesApi } from "@horpynka/api-sdk";
@@ -40,14 +41,7 @@ function DishesPage() {
   if (isError) return <ErrorState message="Не вдалося завантажити страви." />;
   if (!dishes) return null;
 
-  const getCategoryName = (categoryId: number | null) => {
-    if (!categoryId || !categories) return "—";
-    return (
-      [...categories.dishesCategories, ...categories.productsCategories].find(
-        (c) => c.id === categoryId,
-      )?.name ?? "—"
-    );
-  };
+  const getCategoryName = (categoryId: number | null) => categoryName(categories, categoryId);
 
   const filteredDishes = dishes.filter((dish) => {
     const matchesSearch = search
