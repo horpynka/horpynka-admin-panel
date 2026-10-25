@@ -31,6 +31,8 @@ interface DataTableProps<T> {
   onRowClick?: (row: T) => void;
   pageSize?: number;
   emptyState?: ReactNode;
+  /** When false, render every row and leave paging to the caller. */
+  paginate?: boolean;
 }
 
 const HIDE_CLASSES: Record<string, string> = {
@@ -46,6 +48,7 @@ export function DataTable<T>({
   onRowClick,
   pageSize = 15,
   emptyState,
+  paginate = true,
 }: DataTableProps<T>) {
   const [sort, setSort] = useState<{ id: string; direction: "asc" | "desc" } | null>(null);
   const [page, setPage] = useState(1);
@@ -67,7 +70,9 @@ export function DataTable<T>({
 
   const totalPages = Math.max(1, Math.ceil(sortedRows.length / pageSize));
   const currentPage = Math.min(page, totalPages);
-  const pageRows = sortedRows.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  const pageRows = paginate
+    ? sortedRows.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+    : sortedRows;
 
   const toggleSort = (id: string) => {
     setPage(1);
@@ -151,33 +156,35 @@ export function DataTable<T>({
         </Table>
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-muted-foreground">
-        <span>
-          Показано {(currentPage - 1) * pageSize + 1}–
-          {Math.min(currentPage * pageSize, sortedRows.length)} з {sortedRows.length}
-        </span>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={currentPage <= 1}
-            onClick={() => setPage(currentPage - 1)}
-          >
-            Назад
-          </Button>
-          <span className="whitespace-nowrap">
-            Сторінка {currentPage} з {totalPages}
+      {paginate ? (
+        <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-muted-foreground">
+          <span>
+            Показано {(currentPage - 1) * pageSize + 1}–
+            {Math.min(currentPage * pageSize, sortedRows.length)} з {sortedRows.length}
           </span>
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={currentPage >= totalPages}
-            onClick={() => setPage(currentPage + 1)}
-          >
-            Далі
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={currentPage <= 1}
+              onClick={() => setPage(currentPage - 1)}
+            >
+              Назад
+            </Button>
+            <span className="whitespace-nowrap">
+              Сторінка {currentPage} з {totalPages}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={currentPage >= totalPages}
+              onClick={() => setPage(currentPage + 1)}
+            >
+              Далі
+            </Button>
+          </div>
         </div>
-      </div>
+      ) : null}
     </div>
   );
 }
