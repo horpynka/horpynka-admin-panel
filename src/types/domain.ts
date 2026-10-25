@@ -120,6 +120,8 @@ export interface CashShift {
   cardSales: number;
   refunds: number;
   closingBalance: number;
+  actualClosingBalance: number | null;
+  difference: number | null;
   ordersCount: number;
   status: CashShiftStatus;
   cashierName: string;

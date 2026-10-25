@@ -18,6 +18,23 @@ export function toKopecks(value: number): number {
   return Math.round(value * 100);
 }
 
+/**
+ * Розбирає невід'ємну суму в гривнях у цілі копійки.
+ * Приймає «500», «500,50», «500.5» і пробіли як роздільник тисяч.
+ * Повертає null, якщо текст порожній або це не сума з точністю до копійки.
+ */
+export function parseKopecks(raw: string): number | null {
+  const compact = raw.trim().replace(/\s/g, "").replace(",", ".");
+  const normalized = compact.endsWith(".") ? compact.slice(0, -1) : compact;
+  if (!/^\d+(\.\d{1,2})?$/.test(normalized)) return null;
+
+  const [whole, fraction = ""] = normalized.split(".");
+  const hryvnias = Number(whole);
+  const kopecks = hryvnias * 100 + Number(fraction.padEnd(2, "0"));
+  if (!Number.isSafeInteger(hryvnias) || !Number.isSafeInteger(kopecks)) return null;
+  return kopecks;
+}
+
 /** Перетворює копійки у число гривень для полів форми. */
 export function toHryvnias(value: number): number {
   return Math.round(value) / 100;
