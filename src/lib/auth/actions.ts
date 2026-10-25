@@ -3,12 +3,7 @@ import { authApi } from "@horpynka/api-sdk";
 
 import { isUnauthorized } from "./errors";
 import { emitAuthLogout } from "./events";
-import {
-  sessionHasPanelAccess,
-  sessionQueryKey,
-  sessionQueryOptions,
-  type AuthSession,
-} from "./session";
+import { sessionQueryOptions, type AuthSession } from "./session";
 import { clearAccessToken, setAccessToken } from "./tokens";
 
 export async function signIn(
@@ -28,14 +23,7 @@ export async function signIn(
     throw new Error("Не вдалося виконати вхід.");
   }
 
-  const session = await queryClient.fetchQuery(sessionQueryOptions);
-  if (!sessionHasPanelAccess(session)) {
-    clearAccessToken();
-    queryClient.removeQueries({ queryKey: sessionQueryKey });
-    throw new Error("Немає доступу до адмін-панелі.");
-  }
-
-  return session;
+  return queryClient.fetchQuery(sessionQueryOptions);
 }
 
 export function signOut(): void {

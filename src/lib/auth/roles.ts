@@ -9,10 +9,6 @@ export function isAssignableRole(role: string): role is AssignableRole {
   return (ASSIGNABLE_ROLES as readonly string[]).includes(role);
 }
 
-export function hasPanelAccess(roles: readonly string[]): boolean {
-  return roles.includes(PANEL_ADMIN_ROLE);
-}
-
 /**
  * The generated client types a unique role list as Set, then JSON.stringifies the body.
  * A real Set becomes `{}`. The API expects a JSON array, so this keeps the array at runtime.
