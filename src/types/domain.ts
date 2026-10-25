@@ -120,6 +120,8 @@ export interface CashShift {
   cardSales: number;
   refunds: number;
   closingBalance: number;
+  actualClosingBalance: number | null;
+  difference: number | null;
   ordersCount: number;
   status: CashShiftStatus;
   cashierName: string;
@@ -132,7 +134,8 @@ export interface InventoryItem {
   name: string;
   measurementUnit: MeasurementUnit;
   expectedQuantity: number;
-  actualQuantity: number;
+  /** Порожнє, доки фактичну кількість не збережено. */
+  actualQuantity: number | null;
 }
 
 export interface Inventory {
