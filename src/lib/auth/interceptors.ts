@@ -84,7 +84,7 @@ export function installAuthInterceptors(apiClient: AxiosInstance): void {
         isRefreshing = true;
 
         try {
-          const { data } = await apiClient.get<RefreshResponse>("/auth/refresh", {
+          const { data } = await apiClient.post<RefreshResponse>("/auth/refresh", {
             withCredentials: true,
           });
           if (!data?.accessToken) {
